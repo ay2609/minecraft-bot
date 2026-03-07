@@ -19,18 +19,18 @@ created: 2026-03-07
 |----------|-------|
 | **Framework** | TypeScript runtime tests via `tsx` + static checks (`tsc`, `eslint`) |
 | **Config file** | `tsconfig.json`, `.eslintrc.json` |
-| **Quick run command** | `npm run typecheck && npm run lint` |
-| **Full suite command** | `npm run typecheck && npm run lint && npm run build && npx tsx src/memory/MemoryRestart.integration.test.ts` |
-| **Estimated runtime** | ~90 seconds |
+| **Quick run command** | `npm run typecheck` |
+| **Full suite command** | `npm run typecheck && npm run lint && npm run build && npx tsx src/perception/SnapshotBuilder.test.ts && npx tsx src/perception/PerceptionService.test.ts && npx tsx src/perception/ContextAssembler.test.ts && npx tsx src/perception/PerceptionContext.integration.test.ts` |
+| **Estimated runtime** | ~110 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Run `npm run typecheck && npm run lint`
-- **After every plan wave:** Run `npm run typecheck && npm run lint && npm run build && npx tsx src/memory/MemoryRestart.integration.test.ts`
+- **After every task commit:** Run `npm run typecheck` plus the task-specific perception test file
+- **After every plan wave:** Run `npm run typecheck && npm run lint && npm run build && npx tsx src/perception/SnapshotBuilder.test.ts && npx tsx src/perception/PerceptionService.test.ts && npx tsx src/perception/ContextAssembler.test.ts && npx tsx src/perception/PerceptionContext.integration.test.ts`
 - **Before `$gsd-verify-work`:** Full suite must be green
-- **Max feedback latency:** 120 seconds
+- **Max feedback latency:** 90 seconds
 
 ---
 
@@ -38,9 +38,9 @@ created: 2026-03-07
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 03-01-01 | 01 | 1 | PERC-01 | unit | `npm run typecheck && npm run lint` | ✅ | ⬜ pending |
-| 03-02-01 | 02 | 2 | PERC-02 | integration | `npm run typecheck && npm run lint && npm run build` | ✅ | ⬜ pending |
-| 03-03-01 | 03 | 3 | PERC-03 | integration | `npm run typecheck && npm run lint && npm run build` | ✅ | ⬜ pending |
+| 03-01-01 | 01 | 1 | PERC-01 | unit | `npm run typecheck && npx tsx src/perception/SnapshotBuilder.test.ts` | ✅ | ⬜ pending |
+| 03-02-01 | 02 | 2 | PERC-02 | integration | `npm run typecheck && npx tsx src/perception/PerceptionService.test.ts` | ✅ | ⬜ pending |
+| 03-03-01 | 03 | 3 | PERC-03 | integration | `npm run typecheck && npx tsx src/perception/ContextAssembler.test.ts && npx tsx src/perception/PerceptionContext.integration.test.ts` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -69,7 +69,7 @@ created: 2026-03-07
 - [x] Sampling continuity: no 3 consecutive tasks without automated verify
 - [x] Wave 0 covers all MISSING references
 - [x] No watch-mode flags
-- [x] Feedback latency < 120s
+- [x] Feedback latency < 90s
 - [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
