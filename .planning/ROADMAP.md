@@ -32,7 +32,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   2. All shared types (`PerceptionSnapshot`, `GoalPlan`, `Subgoal`, `ActionQueue`, `ActionItem`, `ExecutorResult`, `ExecutorErrorCode`) are importable from a single types module and used throughout the codebase
   3. EventBus pub/sub is operational — a subscriber registered in one module receives events emitted from another without either importing the other directly
   4. ESLint `no-floating-promises` rule is enforced and all async handlers have explicit error boundaries
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 01-01-PLAN.md — Project foundation: package.json, tsconfig.json (CJS), ESLint with no-floating-promises
+- [ ] 01-02-PLAN.md — Shared types module and typed EventBus singleton
+- [ ] 01-03-PLAN.md — Bot entry point, config module, mineflayer connection smoke test
 
 ### Phase 2: Memory Persistence
 **Goal**: All four memory systems initialize correctly on startup and survive process restarts
@@ -114,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Scaffolding | 0/TBD | Not started | - |
+| 1. Project Scaffolding | 0/3 | Ready to execute | - |
 | 2. Memory Persistence | 0/TBD | Not started | - |
 | 3. Perception Layer | 0/TBD | Not started | - |
 | 4. Skills and Executor | 0/TBD | Not started | - |
