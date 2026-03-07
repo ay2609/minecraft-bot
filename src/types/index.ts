@@ -31,6 +31,7 @@ export interface PerceptionSnapshot {
   yaw: number;
   health: number;
   food: number;
+  armorPoints: number;
   gameMode: string;
   isOnGround: boolean;
   // Inventory

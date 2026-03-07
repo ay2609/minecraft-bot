@@ -15,6 +15,7 @@ function testPubSub(): void {
     yaw: 0,
     health: 20,
     food: 20,
+    armorPoints: 0,
     gameMode: 'survival',
     isOnGround: true,
     inventory: {},
