@@ -13,7 +13,7 @@ Build a hierarchical LLM-powered Minecraft agent from the bottom up: typed contr
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Project Scaffolding** - TypeScript project boots, shared types compile, EventBus wires layers together
-- [ ] **Phase 2: Memory Persistence** - SQLite schemas initialize on startup; working, semantic, and episodic memory survive restarts
+- [x] **Phase 2: Memory Persistence** - SQLite schemas initialize on startup; working, semantic, and episodic memory survive restarts (completed 2026-03-07)
 - [ ] **Phase 3: Perception Layer** - Bot produces debounced PerceptionSnapshot at 1-2 Hz; context assembler composes prompt-ready context
 - [ ] **Phase 4: Skills and Executor** - All 10 skills run against a live server with structured error codes; no LLM involved
 - [ ] **Phase 5: LLM Client and Tactical Planner** - Fireworks client calls succeed; Model B manages the action queue end-to-end
@@ -119,7 +119,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Project Scaffolding | 3/3 | Complete | 2026-03-07 |
-| 2. Memory Persistence | 2/3 | In Progress|  |
+| 2. Memory Persistence | 3/3 | Complete   | 2026-03-07 |
 | 3. Perception Layer | 0/TBD | Not started | - |
 | 4. Skills and Executor | 0/TBD | Not started | - |
 | 5. LLM Client and Tactical Planner | 0/TBD | Not started | - |
