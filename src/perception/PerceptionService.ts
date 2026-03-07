@@ -1,5 +1,5 @@
 import type { BotEvents, TypedEventBus } from '../events/EventBus';
-import type { ExecutorResult, PerceptionSnapshot } from '../types/index';
+import type { PerceptionSnapshot } from '../types/index';
 import {
   createPerceptionCadenceState,
   DEFAULT_PERCEPTION_CADENCE_CONFIG,
@@ -149,8 +149,8 @@ export class PerceptionService {
     const onBotDeath = (): void => {
       this.markDirty({ burst: true });
     };
-    const onExecutorResult = (result: ExecutorResult): void => {
-      this.markDirty({ burst: !result.success });
+    const onExecutorResult = (): void => {
+      this.markDirty({ burst: true });
     };
 
     this.subscribe('perception:dirty', onDirtySignal);

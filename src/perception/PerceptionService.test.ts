@@ -153,6 +153,91 @@ function createFakeEventBusFacade(
   };
 }
 
+interface ScheduledTimer {
+  id: number;
+  dueAt: number;
+  callback: () => void;
+}
+
+interface ServiceHarness {
+  now: number;
+  emittedAt: number[];
+  emittedSnapshots: PerceptionSnapshot[];
+  bus: FakeEventBus;
+  service: PerceptionService;
+  nextTimer: () => ScheduledTimer | null;
+}
+
+function createServiceHarness(initialNow = 0): ServiceHarness {
+  let now = initialNow;
+  let timerId = 0;
+  const timers = new Map<number, ScheduledTimer>();
+  const bus = createFakeEventBus();
+  const emittedSnapshots: PerceptionSnapshot[] = [];
+  const emittedAt: number[] = [];
+  let sequence = 0;
+
+  const service = new PerceptionService({
+    buildSnapshot: () => {
+      sequence += 1;
+      return createSnapshot(now, `tick-${sequence}`);
+    },
+    clock: () => now,
+    emitSnapshot: (snapshot) => {
+      emittedSnapshots.push(snapshot);
+      emittedAt.push(now);
+    },
+    schedule: (callback, delayMs) => {
+      timerId += 1;
+      timers.set(timerId, {
+        id: timerId,
+        dueAt: now + delayMs,
+        callback,
+      });
+      return timerId;
+    },
+    cancelSchedule: (id) => {
+      timers.delete(id as number);
+    },
+    eventBus: bus as never,
+  });
+
+  return {
+    get now(): number {
+      return now;
+    },
+    set now(value: number) {
+      now = value;
+    },
+    emittedAt,
+    emittedSnapshots,
+    bus,
+    service,
+    nextTimer: () => {
+      const ordered = Array.from(timers.values()).sort((a, b) => a.dueAt - b.dueAt || a.id - b.id);
+      const next = ordered[0];
+      if (!next) {
+        return null;
+      }
+      timers.delete(next.id);
+      return next;
+    },
+  };
+}
+
+function toIntervals(timestamps: number[]): number[] {
+  const intervals: number[] = [];
+  for (let i = 1; i < timestamps.length; i += 1) {
+    const previous = timestamps[i - 1];
+    const current = timestamps[i];
+    if (previous === undefined || current === undefined) {
+      continue;
+    }
+    intervals.push(current - previous);
+  }
+  return intervals;
+}
+
 function testPerceptionServiceRespondsToDirtySignalsFromEventBus(): void {
   let now = 10_000;
   const pending: Array<{ dueAt: number; callback: () => void }> = [];
@@ -205,6 +290,123 @@ function testPerceptionServiceRespondsToDirtySignalsFromEventBus(): void {
   assert(
     delayFromDirty <= 300,
     `Expected burst scheduling <=300ms after dirty signal, got ${delayFromDirty}ms`,
+  );
+}
+
+function testIdleHeartbeatCadenceStaysInOneToTwoHzBand(): void {
+  const harness = createServiceHarness(5_000);
+  harness.service.start();
+
+  while (harness.emittedAt.length < 5) {
+    const timer = harness.nextTimer();
+    assert(timer !== null, 'Expected timer while collecting idle cadence samples');
+    if (timer === null) {
+      throw new Error('Expected timer while collecting idle cadence samples');
+    }
+    harness.now = timer.dueAt;
+    timer.callback();
+  }
+
+  const intervals = toIntervals(harness.emittedAt);
+  assert(intervals.length > 0, 'Expected idle intervals');
+  assert(
+    intervals.every((interval) => interval >= 500 && interval <= 1000),
+    `Expected idle cadence intervals in 500-1000ms band, got [${intervals.join(', ')}]`,
+  );
+}
+
+function testExecutorResultSignalAcceleratesCadence(): void {
+  const harness = createServiceHarness(8_000);
+  harness.service.start();
+
+  const firstTimer = harness.nextTimer();
+  assert(firstTimer !== null, 'Expected initial timer');
+  if (firstTimer === null) {
+    throw new Error('Expected initial timer');
+  }
+  harness.now = firstTimer.dueAt;
+  firstTimer.callback();
+
+  harness.now += 50;
+  harness.bus.emit('executor:result', {
+    actionItem: { skill: 'move_to', params: {}, expectedDurationSeconds: 10 },
+    success: true,
+    errorCode: null,
+    errorMessage: null,
+    durationMs: 200,
+    stateChanges: {},
+  });
+
+  const acceleratedTimer = harness.nextTimer();
+  assert(acceleratedTimer !== null, 'Expected rescheduled timer after executor result signal');
+  if (acceleratedTimer === null) {
+    throw new Error('Expected rescheduled timer after executor result signal');
+  }
+
+  const delayMs = acceleratedTimer.dueAt - harness.now;
+  assert(delayMs <= 300, `Expected accelerated cadence <=300ms after executor result, got ${delayMs}ms`);
+}
+
+function testBurstCadenceIsHardCappedAndCoolsDown(): void {
+  const harness = createServiceHarness(12_000);
+  harness.service.start();
+
+  const initialTimer = harness.nextTimer();
+  assert(initialTimer !== null, 'Expected initial timer');
+  if (initialTimer === null) {
+    throw new Error('Expected initial timer');
+  }
+  harness.now = initialTimer.dueAt;
+  initialTimer.callback();
+
+  harness.now += 10;
+  harness.bus.emit('perception:dirty', { reason: 'activity', burst: true });
+
+  while (harness.emittedAt.length < 9) {
+    const timer = harness.nextTimer();
+    assert(timer !== null, 'Expected timer during burst/cooldown sampling');
+    if (timer === null) {
+      throw new Error('Expected timer during burst/cooldown sampling');
+    }
+    harness.now = timer.dueAt;
+    timer.callback();
+  }
+
+  const intervals = toIntervals(harness.emittedAt);
+  const burstIntervals = intervals.slice(0, 6);
+  assert(
+    burstIntervals.every((interval) => interval >= 250),
+    `Expected burst max rate hard cap (>=250ms intervals), got [${burstIntervals.join(', ')}]`,
+  );
+  const cooldownInterval = intervals.find((interval) => interval >= 700 && interval <= 1000);
+  if (cooldownInterval === undefined) {
+    throw new Error('Expected at least one cooldown interval sample in baseline range');
+  }
+  assert(
+    cooldownInterval >= 700 && cooldownInterval <= 1000,
+    `Expected cooldown to return toward baseline, got ${cooldownInterval}ms`,
+  );
+}
+
+function testSnapshotCycleEmitsExactlyOneEventPayload(): void {
+  const harness = createServiceHarness(16_000);
+  harness.service.start();
+
+  let callbacks = 0;
+  while (callbacks < 4) {
+    const timer = harness.nextTimer();
+    assert(timer !== null, 'Expected timer while counting snapshot cycles');
+    if (timer === null) {
+      throw new Error('Expected timer while counting snapshot cycles');
+    }
+    callbacks += 1;
+    harness.now = timer.dueAt;
+    timer.callback();
+  }
+
+  assert(
+    harness.emittedSnapshots.length === callbacks,
+    `Expected one emitted payload per snapshot cycle: emitted=${harness.emittedSnapshots.length}, cycles=${callbacks}`,
   );
 }
 
@@ -290,6 +492,10 @@ function testInitializeApplicationStartsAndStopsPerceptionService(): void {
 testCadenceDefaultsStartImmediatelyAndThrottleAfterEmit();
 testPerceptionServiceLifecycleAndSingleEmissionPerTick();
 testPerceptionServiceRespondsToDirtySignalsFromEventBus();
+testIdleHeartbeatCadenceStaysInOneToTwoHzBand();
+testExecutorResultSignalAcceleratesCadence();
+testBurstCadenceIsHardCappedAndCoolsDown();
+testSnapshotCycleEmitsExactlyOneEventPayload();
 testInitializeApplicationStartsAndStopsPerceptionService();
 
 console.log('PerceptionService behavior: PASS');
