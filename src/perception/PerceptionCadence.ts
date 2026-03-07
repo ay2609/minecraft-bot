@@ -70,7 +70,7 @@ function applyPassiveTransitions(
   now: number,
   config: PerceptionCadenceConfig,
 ): PerceptionCadenceState {
-  let nextState = { ...state };
+  const nextState = { ...state };
 
   if (nextState.burstUntil !== null && now >= nextState.burstUntil) {
     nextState.burstUntil = null;

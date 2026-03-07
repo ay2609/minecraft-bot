@@ -1,5 +1,5 @@
-import type { TypedEventBus } from '../events/EventBus';
-import type { PerceptionSnapshot } from '../types/index';
+import type { BotEvents, TypedEventBus } from '../events/EventBus';
+import type { ExecutorResult, PerceptionSnapshot } from '../types/index';
 import {
   createPerceptionCadenceState,
   DEFAULT_PERCEPTION_CADENCE_CONFIG,
@@ -9,11 +9,11 @@ import {
   recordCadenceEmission,
 } from './PerceptionCadence';
 
-type ScheduleHandle = unknown;
+type ScheduleHandle = ReturnType<typeof setTimeout> | number;
 
 export interface PerceptionServiceOptions {
   buildSnapshot: () => PerceptionSnapshot;
-  eventBus?: Pick<TypedEventBus, 'emit'>;
+  eventBus?: Pick<TypedEventBus, 'emit' | 'on' | 'off'>;
   emitSnapshot?: (snapshot: PerceptionSnapshot) => void;
   clock?: () => number;
   schedule?: (callback: () => void, delayMs: number) => ScheduleHandle;
@@ -68,7 +68,7 @@ function snapshotFingerprint(snapshot: PerceptionSnapshot): string {
 
 export class PerceptionService {
   private readonly buildSnapshot: () => PerceptionSnapshot;
-  private readonly eventBus?: Pick<TypedEventBus, 'emit'>;
+  private readonly eventBus?: Pick<TypedEventBus, 'emit' | 'on' | 'off'>;
   private readonly emitSnapshot?: (snapshot: PerceptionSnapshot) => void;
   private readonly clock: () => number;
   private readonly schedule: (callback: () => void, delayMs: number) => ScheduleHandle;
@@ -82,6 +82,7 @@ export class PerceptionService {
   private lastFingerprint: string | null = null;
   private lastFingerprintAt: number | null = null;
   private cadenceState = createPerceptionCadenceState();
+  private readonly unsubscribeFns: Array<() => void> = [];
 
   constructor(options: PerceptionServiceOptions) {
     this.buildSnapshot = options.buildSnapshot;
@@ -103,6 +104,7 @@ export class PerceptionService {
     }
 
     this.running = true;
+    this.attachEventBusSignals();
     this.markDirty();
     this.scheduleNext();
   }
@@ -110,6 +112,7 @@ export class PerceptionService {
   stop(): void {
     this.running = false;
     this.clearTimer();
+    this.detachEventBusSignals();
   }
 
   getLastSnapshot(): PerceptionSnapshot | null {
@@ -122,6 +125,56 @@ export class PerceptionService {
       now: this.clock(),
       config: this.cadenceConfig,
       burst: options.burst ?? false,
+    });
+
+    if (this.running) {
+      this.scheduleNext();
+    }
+  }
+
+  private attachEventBusSignals(): void {
+    if (!this.eventBus || this.unsubscribeFns.length > 0) {
+      return;
+    }
+
+    const onDirtySignal = (payload: BotEvents['perception:dirty'][0]): void => {
+      this.markDirty({ burst: payload.burst });
+    };
+    const onBotSpawned = (): void => {
+      this.markDirty();
+    };
+    const onBotChat = (): void => {
+      this.markDirty({ burst: true });
+    };
+    const onBotDeath = (): void => {
+      this.markDirty({ burst: true });
+    };
+    const onExecutorResult = (result: ExecutorResult): void => {
+      this.markDirty({ burst: !result.success });
+    };
+
+    this.subscribe('perception:dirty', onDirtySignal);
+    this.subscribe('bot:spawned', onBotSpawned);
+    this.subscribe('bot:chat', onBotChat);
+    this.subscribe('bot:death', onBotDeath);
+    this.subscribe('executor:result', onExecutorResult);
+  }
+
+  private detachEventBusSignals(): void {
+    while (this.unsubscribeFns.length > 0) {
+      const unsubscribe = this.unsubscribeFns.pop();
+      unsubscribe?.();
+    }
+  }
+
+  private subscribe<K extends keyof BotEvents>(event: K, listener: (...args: BotEvents[K]) => void): void {
+    if (!this.eventBus) {
+      return;
+    }
+
+    this.eventBus.on(event, listener);
+    this.unsubscribeFns.push(() => {
+      this.eventBus?.off(event, listener);
     });
   }
 

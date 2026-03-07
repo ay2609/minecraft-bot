@@ -13,6 +13,7 @@ import type {
 // Typed event map — all cross-layer events declared here
 export interface BotEvents {
   'perception:updated': [snapshot: PerceptionSnapshot];
+  'perception:dirty': [payload: { reason: string; burst: boolean }];
   'strategic:plan-ready': [plan: GoalPlan];
   'tactical:queue-ready': [queue: ActionQueue];
   'executor:result': [result: ExecutorResult];
