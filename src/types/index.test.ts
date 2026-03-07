@@ -15,7 +15,6 @@ const _allCodes: ExecutorErrorCode[] = [
   'tool_missing', 'unsafe', 'timed_out', 'target_unavailable',
   'route_blocked', 'invalid_state',
 ];
-const _badCode: ExecutorErrorCode = 'not_a_real_error';
 
 // ExecutorResult errorCode must be nullable
 const _result: ExecutorResult = {
@@ -40,5 +39,5 @@ const _plan: GoalPlan = {
 };
 
 // Suppress "unused" warnings
-void _errorCode; void _allCodes; void _badCode; void _result; void _plan;
+void _errorCode; void _allCodes; void _result; void _plan;
 export {};
