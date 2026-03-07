@@ -14,7 +14,7 @@
 
 ### Perception
 
-- [ ] **PERC-01**: Bot produces a structured `PerceptionSnapshot` at 1–2 Hz containing: position, health, hunger, armor, inventory contents, nearby entities (type/distance/health), nearby blocks (type/position), current action, recent failures, time-of-day
+- [x] **PERC-01**: Bot produces a structured `PerceptionSnapshot` at 1–2 Hz containing: position, health, hunger, armor, inventory contents, nearby entities (type/distance/health), nearby blocks (type/position), current action, recent failures, time-of-day
 - [ ] **PERC-02**: Snapshot generation is debounced (not per-tick, not on-demand) and emits an event on the EventBus when ready
 - [ ] **PERC-03**: Context assembler composes a compact prompt-ready context object from the current snapshot + relevant memory entries; downstream models receive this assembled context, not raw state
 
@@ -94,7 +94,7 @@
 | MEM-02 | Phase 2 | Complete |
 | MEM-03 | Phase 2 | Complete |
 | MEM-04 | Phase 2 | Complete |
-| PERC-01 | Phase 3 | Pending |
+| PERC-01 | Phase 3 | Complete |
 | PERC-02 | Phase 3 | Pending |
 | PERC-03 | Phase 3 | Pending |
 | EXEC-01 | Phase 4 | Pending |

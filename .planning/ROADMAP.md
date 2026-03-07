@@ -120,7 +120,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Project Scaffolding | 3/3 | Complete | 2026-03-07 |
 | 2. Memory Persistence | 3/3 | Complete   | 2026-03-07 |
-| 3. Perception Layer | 0/TBD | Not started | - |
+| 3. Perception Layer | 1/3 | In Progress|  |
 | 4. Skills and Executor | 0/TBD | Not started | - |
 | 5. LLM Client and Tactical Planner | 0/TBD | Not started | - |
 | 6. Strategic Planner and Autonomous Loop | 0/TBD | Not started | - |

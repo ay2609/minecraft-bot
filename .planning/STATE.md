@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: 3
 status: verifying
-stopped_at: Phase 3 context gathered
-last_updated: "2026-03-07T10:32:00.651Z"
+stopped_at: Completed 03-perception-layer-01-PLAN.md
+last_updated: "2026-03-07T12:00:26.508Z"
 last_activity: 2026-03-07
 progress:
   total_phases: 8
   completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
+  total_plans: 9
+  completed_plans: 7
   percent: 100
 ---
 
@@ -59,6 +59,7 @@ Progress: [██████████] 100%
 | Phase 02-memory-persistence P01 | 2 min | 2 tasks | 4 files |
 | Phase 02-memory-persistence P02 | 5 min | 2 tasks | 7 files |
 | Phase 02-memory-persistence P03 | 22 min | 3 tasks | 7 files |
+| Phase 03-perception-layer P01 | 2 min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -85,6 +86,8 @@ Recent decisions affecting current work:
 - [Phase 02-memory-persistence]: Restore clears execution transients and marks queue revalidation to prevent stale in-flight continuation.
 - [Phase 02-memory-persistence]: Startup must fail closed: memory restore errors block readiness and runtime-loop continuation.
 - [Phase 02-memory-persistence]: Durability coverage verifies queryability after DB reopen rather than relying on in-memory state.
+- [Phase 03-perception-layer]: Recent failures are bounded in snapshot output by keeping newest entries up to recentFailureLimit.
+- [Phase 03-perception-layer]: Perception contract tests validate exact key surface to prevent accidental schema drift.
 
 ### Pending Todos
 
@@ -99,6 +102,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T10:32:00.648Z
-Stopped at: Phase 3 context gathered
-Resume file: .planning/phases/03-perception-layer/03-CONTEXT.md
+Last session: 2026-03-07T12:00:26.506Z
+Stopped at: Completed 03-perception-layer-01-PLAN.md
+Resume file: None
