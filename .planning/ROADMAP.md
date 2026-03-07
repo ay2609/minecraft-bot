@@ -57,7 +57,11 @@ Plans:
   1. A `PerceptionSnapshot` is produced at 1-2 Hz containing position, health, hunger, armor, inventory, nearby entities (type/distance/health), nearby blocks (type/position), current action, recent failures, and time-of-day — no raw mineflayer state leaks through
   2. Snapshot production is debounced — rapid game events do not produce multiple snapshots; exactly one event fires on EventBus per snapshot cycle
   3. The context assembler produces a compact context object from snapshot + relevant memory entries; the output fits a token budget and contains no raw database dumps
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [x] 03-01-PLAN.md — Deterministic perception snapshot contract and bounded nearby scanning
+- [x] 03-02-PLAN.md — Cadence-controlled perception runtime, EventBus emission, and temporal integration tests
+- [ ] 03-03-PLAN.md — Context assembly from snapshot + memory into compact planner-ready payload
 
 ### Phase 4: Skills and Executor
 **Goal**: All 10 core skills execute against a live Minecraft server and return structured results; no LLM calls required to verify this phase
@@ -120,7 +124,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Project Scaffolding | 3/3 | Complete | 2026-03-07 |
 | 2. Memory Persistence | 3/3 | Complete   | 2026-03-07 |
-| 3. Perception Layer | 1/3 | In Progress|  |
+| 3. Perception Layer | 2/3 | In Progress |  |
 | 4. Skills and Executor | 0/TBD | Not started | - |
 | 5. LLM Client and Tactical Planner | 0/TBD | Not started | - |
 | 6. Strategic Planner and Autonomous Loop | 0/TBD | Not started | - |

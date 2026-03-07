@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 current_plan: 3
-status: verifying
-stopped_at: Completed 03-perception-layer-01-PLAN.md
-last_updated: "2026-03-07T12:00:26.508Z"
+status: Ready for execution
+stopped_at: Completed 03-perception-layer-02-PLAN.md
+last_updated: "2026-03-07T15:10:08.735Z"
 last_activity: 2026-03-07
 progress:
   total_phases: 8
   completed_phases: 2
   total_plans: 9
-  completed_plans: 7
+  completed_plans: 8
   percent: 100
 ---
 
@@ -22,15 +22,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** The bot should feel like a competent, persistent player — not a command executor. It pursues meaningful goals on its own, recovers when plans break, and doesn't require babysitting.
-**Current focus:** Phase 2 - Memory Persistence (complete, awaiting verification/transition)
+**Current focus:** Phase 3 - Perception Layer (plan 02 complete, plan 03 pending)
 
 ## Current Position
 
-Phase: 2 of 8 (Memory Persistence - complete)
-Plan: 3 of 3 in current phase
+Phase: 3 of 8 (Perception Layer - in progress)
+Plan: 2 of 3 in current phase
 Current Plan: 3
 Total Plans in Phase: 3
-Status: Ready for verification
+Status: Ready for execution
 Last activity: 2026-03-07
 
 Progress: [██████████] 100%
@@ -38,9 +38,9 @@ Progress: [██████████] 100%
 ## Performance Metrics
 
 **Velocity:**
-- Total plans completed: 6
-- Average duration: 10.7m
-- Total execution time: 1.07 hours
+- Total plans completed: 8
+- Average duration: 8.5m
+- Total execution time: 1.13 hours
 
 **By Phase:**
 
@@ -49,7 +49,7 @@ Progress: [██████████] 100%
 | - | - | - | - |
 
 **Recent Trend:**
-- Last 5 plans: 12m, 10m, 2m, 5m, 22m
+- Last 5 plans: 10m, 2m, 5m, 22m, 2m
 - Trend: mixed
 
 *Updated after each plan completion*
@@ -60,6 +60,8 @@ Progress: [██████████] 100%
 | Phase 02-memory-persistence P02 | 5 min | 2 tasks | 7 files |
 | Phase 02-memory-persistence P03 | 22 min | 3 tasks | 7 files |
 | Phase 03-perception-layer P01 | 2 min | 2 tasks | 7 files |
+| Phase 03-perception-layer P02 | 2 min | 3 tasks | 5 files |
+| Phase 03-perception-layer P02 | 16m | 3 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -88,6 +90,9 @@ Recent decisions affecting current work:
 - [Phase 02-memory-persistence]: Durability coverage verifies queryability after DB reopen rather than relying on in-memory state.
 - [Phase 03-perception-layer]: Recent failures are bounded in snapshot output by keeping newest entries up to recentFailureLimit.
 - [Phase 03-perception-layer]: Perception contract tests validate exact key surface to prevent accidental schema drift.
+- [Phase 03-perception-layer]: Perception cadence is burst-aware but hard-capped and emits exactly one update event per snapshot cycle.
+- [Phase 03-perception-layer]: Executor-result signals are treated as burst-worthy dirty events so post-action state changes propagate quickly.
+- [Phase 03-perception-layer]: Cooldown validation in tests uses interval detection after enough burst samples, not fixed timer-index assumptions.
 
 ### Pending Todos
 
@@ -102,6 +107,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T12:00:26.506Z
-Stopped at: Completed 03-perception-layer-01-PLAN.md
+Last session: 2026-03-07T15:10:08.733Z
+Stopped at: Completed 03-perception-layer-02-PLAN.md
 Resume file: None
