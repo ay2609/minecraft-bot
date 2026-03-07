@@ -12,7 +12,7 @@ Build a hierarchical LLM-powered Minecraft agent from the bottom up: typed contr
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: Project Scaffolding** - TypeScript project boots, shared types compile, EventBus wires layers together
+- [x] **Phase 1: Project Scaffolding** - TypeScript project boots, shared types compile, EventBus wires layers together
 - [ ] **Phase 2: Memory Persistence** - SQLite schemas initialize on startup; working, semantic, and episodic memory survive restarts
 - [ ] **Phase 3: Perception Layer** - Bot produces debounced PerceptionSnapshot at 1-2 Hz; context assembler composes prompt-ready context
 - [ ] **Phase 4: Skills and Executor** - All 10 skills run against a live server with structured error codes; no LLM involved
@@ -34,9 +34,9 @@ Decimal phases appear between their surrounding integers in numeric order.
   4. ESLint `no-floating-promises` rule is enforced and all async handlers have explicit error boundaries
 **Plans**: 3 plans
 Plans:
-- [ ] 01-01-PLAN.md — Project foundation: package.json, tsconfig.json (CJS), ESLint with no-floating-promises
-- [ ] 01-02-PLAN.md — Shared types module and typed EventBus singleton
-- [ ] 01-03-PLAN.md — Bot entry point, config module, mineflayer connection smoke test
+- [x] 01-01-PLAN.md — Project foundation: package.json, tsconfig.json (CJS), ESLint with no-floating-promises
+- [x] 01-02-PLAN.md — Shared types module and typed EventBus singleton
+- [x] 01-03-PLAN.md — Bot entry point, config module, mineflayer connection smoke test
 
 ### Phase 2: Memory Persistence
 **Goal**: All four memory systems initialize correctly on startup and survive process restarts
@@ -118,7 +118,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Project Scaffolding | 2/3 | In Progress|  |
+| 1. Project Scaffolding | 3/3 | Complete | 2026-03-07 |
 | 2. Memory Persistence | 0/TBD | Not started | - |
 | 3. Perception Layer | 0/TBD | Not started | - |
 | 4. Skills and Executor | 0/TBD | Not started | - |
