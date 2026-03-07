@@ -96,7 +96,10 @@ function createInput(overrides: Partial<PlannerContextInput> = {}): PlannerConte
       activeSubgoalId: 'sg-1',
       inFlightSkill: 'move_to',
     },
-    retrieveMemory: async () => createMemory(goal),
+    retrieveMemory: async () => {
+      await Promise.resolve();
+      return createMemory(goal);
+    },
     ...overrides,
   };
 }

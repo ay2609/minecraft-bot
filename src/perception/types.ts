@@ -63,3 +63,73 @@ export interface SnapshotBuildInput {
     recentFailureLimit: number;
   };
 }
+
+export interface PlannerContextIntent {
+  activeGoal: string | null;
+  activeSubgoalId: string | null;
+  inFlightSkill: string | null;
+}
+
+export interface SemanticMemorySlice {
+  label: string;
+  position: Vec3Like;
+  distance: number;
+  confidence: number;
+  lastSeenAt: string;
+}
+
+export interface EpisodicMemorySlice {
+  goal: string;
+  action: string;
+  outcome: 'success' | 'failure';
+  failureReason: string | null;
+  createdAt: string;
+}
+
+export interface MemoryAttachment {
+  semantic: SemanticMemorySlice[];
+  episodic: EpisodicMemorySlice[];
+}
+
+export interface PlannerContextInput {
+  snapshot: import('../types/index').PerceptionSnapshot;
+  intent: PlannerContextIntent;
+  retrieveMemory: () => Promise<MemoryAttachment>;
+}
+
+export interface PlannerContextTruncationMeta {
+  applied: boolean;
+  droppedEpisodic: number;
+  droppedSemantic: number;
+  reason: string | null;
+}
+
+export interface PlannerContextMeta {
+  memorySource: 'live' | 'stale-cache' | 'empty';
+  memoryTimedOut: boolean;
+  truncation: PlannerContextTruncationMeta;
+}
+
+export interface PlannerContextBundle {
+  snapshot: PlannerSnapshotDigest;
+  intent: {
+    activeGoal: string | null;
+  };
+  memory: MemoryAttachment;
+  meta: PlannerContextMeta;
+}
+
+export interface ContextAssemblerOptions {
+  memoryTimeoutMs?: number;
+  maxChars?: number;
+  semanticLimit?: number;
+  episodicLimit?: number;
+}
+
+export interface PlannerSnapshotDigest {
+  position: Vec3Like;
+  biome: string;
+  currentAction: string | null;
+  nearbyEntities: string[];
+  nearbyBlocks: string[];
+}
