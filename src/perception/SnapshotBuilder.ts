@@ -27,6 +27,15 @@ function cloneFailureRecord(record: FailureRecord): FailureRecord {
   };
 }
 
+function projectRecentFailures(records: FailureRecord[], limit: number): FailureRecord[] {
+  const boundedLimit = Number.isFinite(limit) ? Math.max(0, Math.floor(limit)) : 0;
+  if (boundedLimit === 0) {
+    return [];
+  }
+  const startIndex = Math.max(0, records.length - boundedLimit);
+  return records.slice(startIndex).map(cloneFailureRecord);
+}
+
 export function buildPerceptionSnapshot(input: SnapshotBuildInput): PerceptionSnapshot {
   return {
     timestamp: input.timestamp ?? Date.now(),
@@ -57,6 +66,6 @@ export function buildPerceptionSnapshot(input: SnapshotBuildInput): PerceptionSn
     }),
     lightLevel: input.self.lightLevel,
     currentAction: input.runtime.currentAction,
-    recentFailures: input.runtime.recentFailures.map(cloneFailureRecord),
+    recentFailures: projectRecentFailures(input.runtime.recentFailures, input.scan.recentFailureLimit),
   };
 }
