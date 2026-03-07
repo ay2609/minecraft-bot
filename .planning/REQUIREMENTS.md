@@ -26,10 +26,10 @@
 
 ### Memory
 
-- [ ] **MEM-01**: Working memory holds current plan, active subgoal, action queue, and constraints as an in-process object; it is the single source of truth for what the bot is currently doing
+- [x] **MEM-01**: Working memory holds current plan, active subgoal, action queue, and constraints as an in-process object; it is the single source of truth for what the bot is currently doing
 - [ ] **MEM-02**: Semantic memory persists to SQLite: locations (named places with coordinates), resources (where things were found), known routes, known structures, server-specific facts; queryable by type and proximity
 - [ ] **MEM-03**: Episodic memory persists to SQLite: every attempt, outcome, failure reason, and success with timestamps and goal context; queryable to surface relevant past experience for a given goal
-- [ ] **MEM-04**: On process restart, semantic and episodic memory are fully available immediately; working memory is reconstructed from the last committed plan state so the bot resumes rather than starting from scratch
+- [x] **MEM-04**: On process restart, semantic and episodic memory are fully available immediately; working memory is reconstructed from the last committed plan state so the bot resumes rather than starting from scratch
 
 ### Planning
 
@@ -90,10 +90,10 @@
 | FOUND-02 | Phase 1 | Complete |
 | FOUND-03 | Phase 1 | Complete |
 | FOUND-04 | Phase 2 | Complete |
-| MEM-01 | Phase 2 | Pending |
+| MEM-01 | Phase 2 | Complete |
 | MEM-02 | Phase 2 | Pending |
 | MEM-03 | Phase 2 | Pending |
-| MEM-04 | Phase 2 | Pending |
+| MEM-04 | Phase 2 | Complete |
 | PERC-01 | Phase 3 | Pending |
 | PERC-02 | Phase 3 | Pending |
 | PERC-03 | Phase 3 | Pending |

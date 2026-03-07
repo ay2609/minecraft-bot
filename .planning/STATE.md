@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 2
+current_plan: 3
 status: executing
-stopped_at: Completed 02-memory-persistence-01-PLAN.md
-last_updated: "2026-03-07T07:52:37.023Z"
-last_activity: 2026-03-07 - Completed 02-01 plan execution
+stopped_at: Completed 02-memory-persistence-02-PLAN.md
+last_updated: "2026-03-07T08:01:28.694Z"
+last_activity: 2026-03-07
 progress:
   total_phases: 8
   completed_phases: 1
   total_plans: 6
-  completed_plans: 4
+  completed_plans: 5
   percent: 67
 ---
 
@@ -28,10 +28,10 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 Phase: 2 of 8 (Memory Persistence - in progress)
 Plan: 1 of 3 in current phase
-Current Plan: 2
+Current Plan: 3
 Total Plans in Phase: 3
 Status: In Progress
-Last activity: 2026-03-07 - Completed 02-01 plan execution
+Last activity: 2026-03-07
 
 Progress: [███████░░░] 67%
 
@@ -57,6 +57,7 @@ Progress: [███████░░░] 67%
 | Phase 01 P02 | 12m | 2 tasks | 4 files |
 | Phase 01-project-scaffolding P03 | 10m | 3 tasks | 5 files |
 | Phase 02-memory-persistence P01 | 2 min | 2 tasks | 4 files |
+| Phase 02-memory-persistence P02 | 5 min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -79,6 +80,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Standardized mineflayer lifecycle handlers to synchronous EventBus emissions to keep no-floating-promises compliance.
 - [Phase 02-memory-persistence]: Initialize SQLite with WAL/NORMAL/foreign_keys/busy_timeout pragmas during bootstrap.
 - [Phase 02-memory-persistence]: Keep schema DDL centralized in src/memory/schema.ts and apply in a single transaction for idempotent startup.
+- [Phase 02-memory-persistence]: Store latest checkpoint in existing server_facts table under a dedicated key to avoid schema expansion in this plan.
+- [Phase 02-memory-persistence]: Restore clears execution transients and marks queue revalidation to prevent stale in-flight continuation.
 
 ### Pending Todos
 
@@ -93,6 +96,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T07:52:37.020Z
-Stopped at: Completed 02-memory-persistence-01-PLAN.md
+Last session: 2026-03-07T08:01:28.692Z
+Stopped at: Completed 02-memory-persistence-02-PLAN.md
 Resume file: None
