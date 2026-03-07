@@ -96,6 +96,27 @@ export interface ActionQueue {
   subgoalComplete: boolean;
   escalate: boolean;
   escalateReason: string | null;
+  needsRevalidation?: boolean;
+}
+
+export interface WorkingMemoryExecutionState {
+  inFlightAction: ActionItem | null;
+  lockedSkill: string | null;
+}
+
+export interface WorkingMemoryRestoreMetadata {
+  restoredFromCheckpoint: boolean;
+  restoredAt: string | null;
+  checkpointId: string | null;
+}
+
+export interface WorkingMemorySnapshot {
+  activePlan: GoalPlan | null;
+  activeSubgoalId: string | null;
+  actionQueue: ActionQueue | null;
+  constraints: Record<string, unknown>;
+  execution: WorkingMemoryExecutionState;
+  restore: WorkingMemoryRestoreMetadata;
 }
 
 export interface ExecutorResult {
