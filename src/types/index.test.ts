@@ -1,9 +1,5 @@
 import type {
-  PerceptionSnapshot,
   GoalPlan,
-  Subgoal,
-  ActionQueue,
-  ActionItem,
   ExecutorResult,
   ExecutorErrorCode,
 } from './index';

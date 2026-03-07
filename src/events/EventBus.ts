@@ -13,15 +13,23 @@ export interface BotEvents {
   'bot:chat': [payload: { username: string; message: string }];
 }
 
-// Typed EventEmitter using declaration merging
-export declare interface TypedEventBus {
-  on<K extends keyof BotEvents>(event: K, listener: (...args: BotEvents[K]) => void): this;
-  emit<K extends keyof BotEvents>(event: K, ...args: BotEvents[K]): boolean;
-  off<K extends keyof BotEvents>(event: K, listener: (...args: BotEvents[K]) => void): this;
-  once<K extends keyof BotEvents>(event: K, listener: (...args: BotEvents[K]) => void): this;
-}
+export class TypedEventBus extends EventEmitter {
+  on<K extends keyof BotEvents>(event: K, listener: (...args: BotEvents[K]) => void): this {
+    return super.on(event, listener);
+  }
 
-export class TypedEventBus extends EventEmitter {}
+  emit<K extends keyof BotEvents>(event: K, ...args: BotEvents[K]): boolean {
+    return super.emit(event, ...args);
+  }
+
+  off<K extends keyof BotEvents>(event: K, listener: (...args: BotEvents[K]) => void): this {
+    return super.off(event, listener);
+  }
+
+  once<K extends keyof BotEvents>(event: K, listener: (...args: BotEvents[K]) => void): this {
+    return super.once(event, listener);
+  }
+}
 
 // Singleton — import this everywhere, never construct your own
 export const eventBus = new TypedEventBus();

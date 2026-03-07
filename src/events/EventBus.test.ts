@@ -35,7 +35,8 @@ function testPubSub(): void {
   if (received.length !== 1) {
     throw new Error(`Expected 1 event, got ${received.length}`);
   }
-  if (received[0]!.position.x !== 0) {
+  const first = received[0];
+  if (!first || first.position.x !== 0) {
     throw new Error('Payload mismatch');
   }
 
