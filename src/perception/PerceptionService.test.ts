@@ -67,7 +67,7 @@ function testPerceptionServiceLifecycleAndSingleEmissionPerTick(): void {
       return id;
     },
     cancelSchedule: (timerId) => {
-      timers.delete(timerId);
+      timers.delete(timerId as number);
     },
   });
 
@@ -76,6 +76,9 @@ function testPerceptionServiceLifecycleAndSingleEmissionPerTick(): void {
 
   const first = pending.shift();
   assert(first !== undefined, 'Expected initial timer');
+  if (first === undefined) {
+    throw new Error('Expected initial timer');
+  }
   now = first.dueAt;
   first.callback();
 
