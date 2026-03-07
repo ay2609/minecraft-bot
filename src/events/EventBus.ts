@@ -1,16 +1,29 @@
 import { EventEmitter } from 'events';
-import type { PerceptionSnapshot, GoalPlan } from '../types/index';
+import type {
+  ActionQueue,
+  ExecutorResult,
+  GoalPlan,
+  MemoryPersistenceErrorEvent,
+  PerceptionSnapshot,
+  Vec3Like,
+  WorkingMemoryRestoreCompleteEvent,
+  WorkingMemoryRestoreFailedEvent,
+} from '../types/index';
 
 // Typed event map — all cross-layer events declared here
 export interface BotEvents {
   'perception:updated': [snapshot: PerceptionSnapshot];
   'strategic:plan-ready': [plan: GoalPlan];
-  'tactical:queue-ready': [queue: import('../types/index').ActionQueue];
-  'executor:result': [result: import('../types/index').ExecutorResult];
+  'tactical:queue-ready': [queue: ActionQueue];
+  'executor:result': [result: ExecutorResult];
   'escalate:to-strategic': [payload: { reason: string; consecutiveFailures: number }];
   'bot:spawned': [];
-  'bot:death': [payload: { cause: string; position: import('../types/index').Vec3Like }];
+  'bot:death': [payload: { cause: string; position: Vec3Like }];
   'bot:chat': [payload: { username: string; message: string }];
+  'memory:ready': [];
+  'memory:restore-complete': [payload: WorkingMemoryRestoreCompleteEvent];
+  'memory:restore-failed': [payload: WorkingMemoryRestoreFailedEvent];
+  'memory:persistence-error': [payload: MemoryPersistenceErrorEvent];
 }
 
 export class TypedEventBus extends EventEmitter {

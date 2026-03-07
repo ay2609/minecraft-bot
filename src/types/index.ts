@@ -119,6 +119,46 @@ export interface WorkingMemorySnapshot {
   restore: WorkingMemoryRestoreMetadata;
 }
 
+export interface PlanCheckpointPayload {
+  plan: GoalPlan;
+  activeSubgoalId: string | null;
+  actionQueue: ActionQueue | null;
+  constraints: Record<string, unknown>;
+}
+
+export interface PlanCheckpointRecord {
+  checkpointId: string;
+  committedAt: string;
+  commitReason: string;
+  payload: PlanCheckpointPayload;
+}
+
+export interface PlanCheckpointCommitInput extends PlanCheckpointPayload {
+  commitReason: string;
+}
+
+export interface WorkingMemoryRestoreResult {
+  restoredFromCheckpoint: boolean;
+  checkpointId: string | null;
+  restoredAt: string | null;
+}
+
+export interface WorkingMemoryRestoreCompleteEvent {
+  restoredFromCheckpoint: boolean;
+  checkpointId: string | null;
+  restoredAt: string;
+}
+
+export interface WorkingMemoryRestoreFailedEvent {
+  reason: string;
+  checkpointId: string | null;
+}
+
+export interface MemoryPersistenceErrorEvent {
+  operation: string;
+  error: string;
+}
+
 export interface ExecutorResult {
   actionItem: ActionItem;
   success: boolean;

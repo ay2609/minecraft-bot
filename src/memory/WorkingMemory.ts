@@ -1,4 +1,11 @@
-import type { ActionQueue, GoalPlan, WorkingMemoryRestoreMetadata, WorkingMemorySnapshot } from '../types/index';
+import type { CheckpointRepository } from './CheckpointRepository';
+import type {
+  ActionQueue,
+  GoalPlan,
+  PlanCheckpointCommitInput,
+  WorkingMemoryRestoreMetadata,
+  WorkingMemorySnapshot,
+} from '../types/index';
 
 function cloneValue<T>(value: T): T {
   return structuredClone(value);
@@ -70,6 +77,32 @@ export class WorkingMemory {
 
   reset(): void {
     this.state = createInitialState();
+  }
+
+  commitCheckpoint(
+    checkpointRepository: Pick<CheckpointRepository, 'commitCheckpoint'>,
+    commitReason: string,
+  ): string {
+    if (this.state.activePlan === null) {
+      throw new Error('Cannot commit checkpoint without an active plan');
+    }
+
+    const payload: PlanCheckpointCommitInput = {
+      plan: cloneValue(this.state.activePlan),
+      activeSubgoalId: this.state.activeSubgoalId,
+      actionQueue: cloneValue(this.state.actionQueue),
+      constraints: cloneValue(this.state.constraints),
+      commitReason,
+    };
+
+    const checkpointId = checkpointRepository.commitCheckpoint(payload);
+    this.state.restore = {
+      restoredFromCheckpoint: true,
+      restoredAt: new Date().toISOString(),
+      checkpointId,
+    };
+
+    return checkpointId;
   }
 }
 
