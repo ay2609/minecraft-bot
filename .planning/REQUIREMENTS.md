@@ -8,8 +8,8 @@
 ### Foundation
 
 - [x] **FOUND-01**: Developer can initialize the project with a single command (`npm install`) and run the bot with `npm start`; TypeScript compiles via tsx, CJS modules, ESLint enforces `no-floating-promises`
-- [ ] **FOUND-02**: All shared types are defined in a central types module — `PerceptionSnapshot`, `GoalPlan`, `Subgoal`, `ActionQueue`, `ActionItem`, `ExecutorResult`, `ExecutorErrorCode` (10 codes)
-- [ ] **FOUND-03**: EventBus is available as an in-process pub/sub system; planner layers communicate through it rather than direct imports of each other
+- [x] **FOUND-02**: All shared types are defined in a central types module — `PerceptionSnapshot`, `GoalPlan`, `Subgoal`, `ActionQueue`, `ActionItem`, `ExecutorResult`, `ExecutorErrorCode` (10 codes)
+- [x] **FOUND-03**: EventBus is available as an in-process pub/sub system; planner layers communicate through it rather than direct imports of each other
 - [ ] **FOUND-04**: SQLite database initializes on startup with WAL mode enabled and creates all required schemas for semantic and episodic memory
 
 ### Perception
@@ -87,8 +87,8 @@
 | Requirement | Phase | Status |
 |-------------|-------|--------|
 | FOUND-01 | Phase 1 | Complete |
-| FOUND-02 | Phase 1 | Pending |
-| FOUND-03 | Phase 1 | Pending |
+| FOUND-02 | Phase 1 | Complete |
+| FOUND-03 | Phase 1 | Complete |
 | FOUND-04 | Phase 2 | Pending |
 | MEM-01 | Phase 2 | Pending |
 | MEM-02 | Phase 2 | Pending |

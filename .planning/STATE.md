@@ -2,10 +2,11 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Completed 01-01-PLAN.md
-last_updated: "2026-03-07T05:40:39.474Z"
-last_activity: 2026-03-06 — Roadmap created
+current_plan: 2
+status: executing
+stopped_at: Completed 01-02-PLAN.md
+last_updated: "2026-03-07T05:42:22.315Z"
+last_activity: 2026-03-07 — Completed 01-02 plan execution
 progress:
   total_phases: 8
   completed_phases: 0
@@ -30,7 +31,7 @@ Plan: 2 of 3 in current phase
 Current Plan: 2
 Total Plans in Phase: 3
 Status: In Progress
-Last activity: 2026-03-07 — Completed 01-01 plan execution
+Last activity: 2026-03-07 — Completed 01-02 plan execution
 
 Progress: [███████░░░] 67%
 
@@ -53,6 +54,7 @@ Progress: [███████░░░] 67%
 
 *Updated after each plan completion*
 | Phase 01 P01 | 13 min | 2 tasks | 7 files |
+| Phase 01 P02 | 12m | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -69,6 +71,8 @@ Recent decisions affecting current work:
 - [Phase 01]: Kept TypeScript module target as CommonJS to preserve mineflayer/plugin compatibility. — Mineflayer ecosystem is CommonJS-first; ESM target risks runtime/plugin breakage in early phases.
 - [Phase 01]: Enabled @typescript-eslint/no-floating-promises as an error with type-aware parser configuration. — Hard enforcement prevents silent async failures across event-driven control loops.
 - [Phase 01]: Deferred terminal UI dependencies to later phase to avoid premature peer-dependency conflicts. — Scaffold remains stable while deferring known React/ink compatibility risk to scheduled phase.
+- [Phase 01]: Kept cross-layer communication on a singleton EventBus to avoid direct layer imports.
+- [Phase 01]: Used typed overloads on Node EventEmitter (on/emit/off/once) to enforce payload correctness at compile time.
 
 ### Pending Todos
 
@@ -83,6 +87,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-07T05:40:39.472Z
-Stopped at: Completed 01-01-PLAN.md
+Last session: 2026-03-07T05:42:22.288Z
+Stopped at: Completed 01-02-PLAN.md
 Resume file: None
