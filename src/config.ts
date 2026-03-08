@@ -28,6 +28,10 @@ export interface Config {
   executor: {
     defaultTimeoutMs: number;
     perSkillTimeoutMs: Record<CoreSkillName, number> & Record<string, number>;
+    movement: {
+      pendingTtlMs: number;
+      criticalPreemption: boolean;
+    };
   };
 }
 
@@ -83,6 +87,10 @@ export const config: Config = {
       interact_block: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_INTERACT_BLOCK_MS'], 5000),
       attack_entity: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_ATTACK_ENTITY_MS'], 5000),
       send_chat: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_SEND_CHAT_MS'], 3000),
+    },
+    movement: {
+      pendingTtlMs: parsePositiveNumberEnv(process.env['EXECUTOR_MOVEMENT_PENDING_TTL_MS'], 5000),
+      criticalPreemption: (process.env['EXECUTOR_MOVEMENT_CRITICAL_PREEMPTION'] ?? 'true') !== 'false',
     },
   },
 };

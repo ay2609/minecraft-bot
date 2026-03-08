@@ -5,6 +5,10 @@ export interface SkillExecutionOutcome {
   errorCode: ExecutorErrorCode | null;
   errorMessage: string | null;
   stateChanges: ExecutorResult['stateChanges'];
+  movement?: {
+    outcome: 'executed' | 'queued' | 'preempted' | 'interrupted' | 'dropped' | 'timed_out';
+    details?: string;
+  };
 }
 
 export interface ExecutorRunContext {
@@ -30,4 +34,13 @@ export interface ExecutorDependencies {
     emit: (event: 'executor:result', result: ExecutorResult) => boolean;
   };
   now?: () => number;
+}
+
+export type MovementIntent = 'normal' | 'critical';
+
+export interface MovementRequest {
+  actionItem: ActionItem;
+  timeoutMs: number;
+  intent: MovementIntent;
+  execute: (signal: AbortSignal) => Promise<SkillExecutionOutcome>;
 }
