@@ -33,6 +33,13 @@ export interface Config {
       criticalPreemption: boolean;
     };
   };
+  tactical: {
+    watchdogIntervalMs: number;
+    consecutiveFailureThreshold: number;
+    churnOpsThreshold: number;
+    churnWindowSize: number;
+    churnCooldownMs: number;
+  };
 }
 
 function parseNumberEnv(value: string | undefined, fallback: number): number {
@@ -92,5 +99,12 @@ export const config: Config = {
       pendingTtlMs: parsePositiveNumberEnv(process.env['EXECUTOR_MOVEMENT_PENDING_TTL_MS'], 5000),
       criticalPreemption: (process.env['EXECUTOR_MOVEMENT_CRITICAL_PREEMPTION'] ?? 'true') !== 'false',
     },
+  },
+  tactical: {
+    watchdogIntervalMs: parsePositiveNumberEnv(process.env['TACTICAL_WATCHDOG_INTERVAL_MS'], 35000),
+    consecutiveFailureThreshold: parsePositiveNumberEnv(process.env['TACTICAL_CONSECUTIVE_FAILURE_THRESHOLD'], 3),
+    churnOpsThreshold: parsePositiveNumberEnv(process.env['TACTICAL_CHURN_OPS_THRESHOLD'], 5),
+    churnWindowSize: parsePositiveNumberEnv(process.env['TACTICAL_CHURN_WINDOW_SIZE'], 3),
+    churnCooldownMs: parsePositiveNumberEnv(process.env['TACTICAL_CHURN_COOLDOWN_MS'], 30000),
   },
 };

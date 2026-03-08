@@ -1,12 +1,15 @@
 import mineflayer from 'mineflayer';
 import type { Bot } from 'mineflayer';
 import { config, type Config } from './config';
+import { executeAction } from './executor/Executor';
 import { eventBus } from './events/EventBus';
 import { initializeMemory, type InitializeMemoryOptions, type InitializedMemory } from './memory';
 import { buildPerceptionSnapshot } from './perception/SnapshotBuilder';
 import { PerceptionService, type PerceptionServiceOptions } from './perception/PerceptionService';
+import { FireworksLLMClient } from './planner/FireworksLLMClient';
+import { TacticalPlanner } from './planner/TacticalPlanner';
 import type { SnapshotBuildInput } from './perception/types';
-import type { ExecutorResult, FailureRecord, PerceptionSnapshot, Vec3Like } from './types/index';
+import type { ActionQueue, ExecutorResult, FailureRecord, PerceptionSnapshot, Vec3Like } from './types/index';
 
 type BotFactory = (options: Parameters<typeof mineflayer.createBot>[0]) => Bot;
 type MemoryInitializer = (options: InitializeMemoryOptions) => InitializedMemory;
@@ -329,8 +332,40 @@ export function initializeApplication(options: InitializeApplicationOptions = {}
       eventBus,
     });
 
+    const llmClient = new FireworksLLMClient(config.fireworks.apiKey, config.fireworks.modelId);
+    const tacticalPlanner = new TacticalPlanner(llmClient, memory.workingMemory, eventBus, config.tactical);
+
+    const onBotSpawned = (): void => {
+      tacticalPlanner.start();
+    };
+
+    const onEscalateToStrategic = (payload: { reason: string; consecutiveFailures: number }): void => {
+      console.log(
+        `[StrategicPlanner stub] Escalation received: ${payload.reason} (failures: ${payload.consecutiveFailures}) - Phase 6 will handle this`,
+      );
+    };
+
+    const onTacticalQueueReady = (queue: ActionQueue): void => {
+      const nextAction = queue.actions[0];
+      if (!nextAction) {
+        return;
+      }
+
+      void executeAction(nextAction).catch((err: unknown) => {
+        console.error('[Executor] Unexpected error from executeAction:', err);
+      });
+    };
+
+    eventBus.on('bot:spawned', onBotSpawned);
+    eventBus.on('escalate:to-strategic', onEscalateToStrategic);
+    eventBus.on('tactical:queue-ready', onTacticalQueueReady);
+
     const shutdownPerception = (): void => {
       eventBus.off('executor:result', onExecutorResult);
+      eventBus.off('bot:spawned', onBotSpawned);
+      eventBus.off('escalate:to-strategic', onEscalateToStrategic);
+      eventBus.off('tactical:queue-ready', onTacticalQueueReady);
+      tacticalPlanner.stop();
       perception.stop();
     };
 
