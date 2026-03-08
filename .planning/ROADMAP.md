@@ -61,7 +61,7 @@ Plans:
 Plans:
 - [x] 03-01-PLAN.md — Deterministic perception snapshot contract and bounded nearby scanning
 - [x] 03-02-PLAN.md — Cadence-controlled perception runtime, EventBus emission, and temporal integration tests
-- [ ] 03-03-PLAN.md — Context assembly from snapshot + memory into compact planner-ready payload
+- [x] 03-03-PLAN.md — Context assembly from snapshot + memory into compact planner-ready payload
 
 ### Phase 4: Skills and Executor
 **Goal**: All 10 core skills execute against a live Minecraft server and return structured results; no LLM calls required to verify this phase
