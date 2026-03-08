@@ -14,6 +14,7 @@ import { ContextAssembler } from './perception/ContextAssembler';
 import { PerceptionService, type PerceptionServiceOptions } from './perception/PerceptionService';
 import { FireworksLLMClient } from './planner/FireworksLLMClient';
 import { TacticalPlanner } from './planner/TacticalPlanner';
+import { StrategicPlanner } from './planner/StrategicPlanner';
 import type { SnapshotBuildInput } from './perception/types';
 import type { ActionQueue, ExecutorResult, FailureRecord, PerceptionSnapshot, Vec3Like } from './types/index';
 
@@ -345,15 +346,11 @@ export function initializeApplication(options: InitializeApplicationOptions = {}
 
     const llmClient = new FireworksLLMClient(config.fireworks.apiKey, config.fireworks.modelId);
     const tacticalPlanner = new TacticalPlanner(llmClient, memory.workingMemory, eventBus, config.tactical);
+    const strategicPlanner = new StrategicPlanner(llmClient, memory.workingMemory, eventBus, config.strategic);
 
     const onBotSpawned = (): void => {
       tacticalPlanner.start();
-    };
-
-    const onEscalateToStrategic = (payload: { reason: string; consecutiveFailures: number }): void => {
-      console.log(
-        `[StrategicPlanner stub] Escalation received: ${payload.reason} (failures: ${payload.consecutiveFailures}) - Phase 6 will handle this`,
-      );
+      strategicPlanner.start();
     };
 
     const onTacticalQueueReady = (queue: ActionQueue): void => {
@@ -398,17 +395,16 @@ export function initializeApplication(options: InitializeApplicationOptions = {}
     };
 
     eventBus.on('bot:spawned', onBotSpawned);
-    eventBus.on('escalate:to-strategic', onEscalateToStrategic);
     eventBus.on('tactical:queue-ready', onTacticalQueueReady);
     eventBus.on('perception:updated', onPerceptionUpdated);
 
     const shutdownPerception = (): void => {
       eventBus.off('executor:result', onExecutorResult);
       eventBus.off('bot:spawned', onBotSpawned);
-      eventBus.off('escalate:to-strategic', onEscalateToStrategic);
       eventBus.off('tactical:queue-ready', onTacticalQueueReady);
       eventBus.off('perception:updated', onPerceptionUpdated);
       tacticalPlanner.stop();
+      strategicPlanner.stop();
       perception.stop();
     };
 
