@@ -32,7 +32,12 @@ async function testExecutorNeverThrowsAcrossFailurePaths(): Promise<void> {
   assertResultInvariant(throwingResult);
 
   const timedOutResult = await executeAction(failureAction, {
-    resolveSkill: () => () => new Promise((resolve) => setTimeout(resolve, 25)),
+    resolveSkill: () => () => new Promise((resolve) => setTimeout(() => resolve({
+      success: true,
+      errorCode: null,
+      errorMessage: null,
+      stateChanges: {},
+    }), 25)),
     timeoutMsForSkill: () => 5,
   });
   assertResultInvariant(timedOutResult);

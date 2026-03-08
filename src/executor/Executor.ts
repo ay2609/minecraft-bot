@@ -129,7 +129,7 @@ export async function executeAction(
         startedAtMs,
         now,
         'invalid_state',
-        `Unknown skill: ${actionItem.skill}`,
+        'Unknown skill request',
       ),
     );
   }

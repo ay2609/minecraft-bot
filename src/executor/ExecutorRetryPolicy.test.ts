@@ -16,14 +16,14 @@ async function testNoAutomaticRetryByDefault(): Promise<void> {
   };
 
   const result = await executeAction(action, {
-    resolveSkill: () => async () => {
+    resolveSkill: () => () => {
       callCount += 1;
-      return {
+      return Promise.resolve({
         success: false,
         errorCode: 'route_blocked',
         errorMessage: 'blocked',
         stateChanges: {},
-      };
+      });
     },
   });
 
