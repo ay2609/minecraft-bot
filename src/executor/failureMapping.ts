@@ -22,7 +22,7 @@ function compactErrorMessage(error: unknown): string {
   if (typeof error === 'object' && error !== null) {
     const candidate = (error as Record<string, unknown>)['message'];
     if (typeof candidate === 'string' && candidate.trim().length > 0) {
-      return candidate.split('\n')[0]!.trim().slice(0, 180);
+      return (candidate.split('\n')[0] ?? candidate).trim().slice(0, 180);
     }
   }
 

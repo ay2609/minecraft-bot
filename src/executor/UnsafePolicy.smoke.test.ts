@@ -22,7 +22,7 @@ async function testPlaceBlockUnsafeIsAttemptDerived(): Promise<void> {
     y: 65,
     z: 10,
     blockName: 'cobblestone',
-    attempt: async () => {
+    attempt: () => {
       attempts += 1;
       return {
         success: false,
@@ -44,7 +44,7 @@ async function testBreakBlockHardInvalidRejectsBeforeAttempt(): Promise<void> {
     x: 'bad',
     y: 64,
     z: 8,
-    attempt: async () => {
+    attempt: () => {
       attempts += 1;
       return { success: true };
     },
@@ -60,7 +60,7 @@ async function testAttackEntityTargetUnavailableFromAttemptSignal(): Promise<voi
   let attempts = 0;
   const action = createAction('attack_entity', {
     targetId: 'zombie-1',
-    attempt: async () => {
+    attempt: () => {
       attempts += 1;
       return {
         success: false,
@@ -81,7 +81,7 @@ async function testSendChatUsesAttemptOutcomeInsteadOfGlobalRiskGate(): Promise<
   const action = createAction('send_chat', {
     message: 'hello world',
     safetyClass: 'risky',
-    attempt: async () => {
+    attempt: () => {
       attempts += 1;
       return {
         success: true,
