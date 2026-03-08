@@ -183,5 +183,9 @@ export interface ExecutorResult {
     attempt: number;
     timedOut: boolean;
     completedAtMs: number;
+    movement?: {
+      outcome: 'executed' | 'queued' | 'preempted' | 'interrupted' | 'dropped' | 'timed_out';
+      details?: string;
+    };
   };
 }

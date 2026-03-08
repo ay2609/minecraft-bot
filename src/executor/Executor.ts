@@ -37,6 +37,7 @@ function normalizeOutcome(raw: SkillExecutionOutcome): SkillExecutionOutcome {
       errorCode: null,
       errorMessage: null,
       stateChanges: raw.stateChanges ?? {},
+      movement: raw.movement,
     };
   }
 
@@ -45,6 +46,7 @@ function normalizeOutcome(raw: SkillExecutionOutcome): SkillExecutionOutcome {
     errorCode: raw.errorCode ?? 'invalid_state',
     errorMessage: raw.errorMessage ?? 'Skill returned an unsuccessful result without details',
     stateChanges: raw.stateChanges ?? {},
+    movement: raw.movement,
   };
 }
 
@@ -153,6 +155,7 @@ export async function executeAction(
         attempt: 1,
         timedOut: false,
         completedAtMs: now(),
+        movement: normalized.movement,
       },
     });
   } catch (error: unknown) {
