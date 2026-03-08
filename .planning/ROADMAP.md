@@ -105,7 +105,11 @@ Plans:
   2. After handing off a plan to Model B, Model A does not fire again until a discrete trigger occurs — the tactical loop runs autonomously between strategic checkpoints
   3. When the bot has no active goal and is not in a survival emergency, it selects its own next objective (survival, resource gathering, exploration, or progression) and begins executing without any player command
   4. The bot completes the critical path — gathers wood, crafts tools, progresses to stone tools — driven entirely by Model A goal selection and Model B tactical execution
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 06-01-PLAN.md — StrategicOutputSchema (Zod), schema boundary tests, MODEL_A_SYSTEM_PROMPT
+- [ ] 06-02-PLAN.md — StrategicPlanner class: all four trigger paths, dedup, debounce, plan handoff
+- [ ] 06-03-PLAN.md — Config strategic block, index.ts wiring, bot startup verification
 
 ### Phase 7: Recovery System
 **Goal**: The bot detects stalled or looping behavior and escalates to a new strategy rather than grinding indefinitely; death is handled as a system-level reset
@@ -140,6 +144,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Perception Layer | 3/3 | Complete   | 2026-03-08 |
 | 4. Skills and Executor | 4/4 | Complete | 2026-03-08 |
 | 5. LLM Client and Tactical Planner | 2/3 | In Progress|  |
-| 6. Strategic Planner and Autonomous Loop | 0/TBD | Not started | - |
+| 6. Strategic Planner and Autonomous Loop | 0/3 | Not started | - |
 | 7. Recovery System | 0/TBD | Not started | - |
 | 8. Observability and Player Interaction | 0/TBD | Not started | - |
