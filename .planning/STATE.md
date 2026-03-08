@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: 4
 status: verifying
-stopped_at: Completed 06-01-PLAN.md — StrategicOutputSchema and MODEL_A_SYSTEM_PROMPT
-last_updated: "2026-03-08T16:47:30.629Z"
+stopped_at: Completed 06-02-PLAN.md — StrategicPlanner with trigger policies and plan handoff
+last_updated: "2026-03-08T16:53:17.805Z"
 last_activity: 2026-03-08
 progress:
   total_phases: 8
   completed_phases: 5
   total_plans: 20
-  completed_plans: 18
+  completed_plans: 19
   percent: 100
 ---
 
@@ -71,6 +71,7 @@ Progress: [██████████] 100%
 | Phase 05-llm-client-and-tactical-planner P02 | 18min | 2 tasks | 6 files |
 | Phase 05 P04 | 1min | 3 tasks | 3 files |
 | Phase 06-strategic-planner-and-autonomous-loop P01 | 2 | 2 tasks | 3 files |
+| Phase 06-strategic-planner-and-autonomous-loop P02 | 3 | 1 tasks | 2 files |
 
 ## Accumulated Context
 
@@ -126,6 +127,8 @@ Recent decisions affecting current work:
 - [Phase 06-strategic-planner-and-autonomous-loop]: GoalPlanSchema enforces .min(1) on subgoals, successConditions, abortConditions to prevent empty-array contract violations
 - [Phase 06-strategic-planner-and-autonomous-loop]: ChatDecisionSchema and GoalPlanSchema exported from strategicSchema.ts for direct import by StrategicPlanner
 - [Phase 06-strategic-planner-and-autonomous-loop]: MODEL_A_SYSTEM_PROMPT encodes isSurvivalStable guard and progression-first priority defaults
+- [Phase 06-strategic-planner-and-autonomous-loop]: StrategicPlanner mirrors TacticalPlanner named-arrow-property pattern for all event handlers to ensure correct events.off() deregistration in stop()
+- [Phase 06-strategic-planner-and-autonomous-loop]: strategicCallInProgress guards all trigger paths to prevent concurrent LLM calls; handleTacticalQueueReady advances subgoal without LLM on partial completion
 
 ### Pending Todos
 
@@ -140,6 +143,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-08T16:47:30.627Z
-Stopped at: Completed 06-01-PLAN.md — StrategicOutputSchema and MODEL_A_SYSTEM_PROMPT
+Last session: 2026-03-08T16:53:17.802Z
+Stopped at: Completed 06-02-PLAN.md — StrategicPlanner with trigger policies and plan handoff
 Resume file: None
