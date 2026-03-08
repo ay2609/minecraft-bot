@@ -26,6 +26,17 @@ function createAction(skill: 'move_to' | 'follow_entity', id: string): ActionIte
   };
 }
 
+function createDeferred<T>(): {
+  promise: Promise<T>;
+  resolve: (value: T) => void;
+} {
+  let resolve!: (value: T) => void;
+  const promise = new Promise<T>((res) => {
+    resolve = res;
+  });
+  return { promise, resolve };
+}
+
 async function testMoveAndFollowAreCoordinatorMediated(): Promise<void> {
   const seen: string[] = [];
   const movementCoordinator: FakeMovementCoordinator = {
@@ -111,14 +122,12 @@ async function testMovementConflictOutcomeEmitsStructuredExecutorResult(): Promi
 async function testConflictingMovementRequestsAvoidGoalOscillation(): Promise<void> {
   const coordinator = new MovementCoordinator({ pendingTtlMs: 1_000 });
   let executeCalls = 0;
-  let firstResolve: ((value: SkillExecutionOutcome) => void) | null = null;
+  const firstMovementDeferred = createDeferred<SkillExecutionOutcome>();
 
-  const performMovement = (_actionItem: ActionItem): Promise<SkillExecutionOutcome> => {
+  const performMovement = (): Promise<SkillExecutionOutcome> => {
     executeCalls += 1;
     if (executeCalls === 1) {
-      return new Promise<SkillExecutionOutcome>((resolve) => {
-        firstResolve = resolve;
-      });
+      return firstMovementDeferred.promise;
     }
 
     return Promise.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
@@ -126,21 +135,17 @@ async function testConflictingMovementRequestsAvoidGoalOscillation(): Promise<vo
 
   const first = executeAction(createAction('move_to', 'osc-1'), {
     movementCoordinator: coordinator,
-    performMovement: (actionItem) => performMovement(actionItem),
+    performMovement,
   });
   const second = executeAction(createAction('move_to', 'osc-2'), {
     movementCoordinator: coordinator,
-    performMovement: (actionItem) => performMovement(actionItem),
+    performMovement,
   });
   const third = executeAction(createAction('move_to', 'osc-3'), {
     movementCoordinator: coordinator,
-    performMovement: (actionItem) => performMovement(actionItem),
+    performMovement,
   });
-
-  if (!firstResolve) {
-    throw new Error('Expected first movement promise resolver to be set');
-  }
-  firstResolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
+  firstMovementDeferred.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
 
   const firstResult = await first;
   const secondResult = await second;

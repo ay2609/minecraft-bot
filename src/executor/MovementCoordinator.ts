@@ -19,14 +19,18 @@ interface ActiveRequest {
   settleInterruptedByPreemption: boolean;
 }
 
-function interruptedOutcome(message: string, details: string): SkillExecutionOutcome {
+function interruptedOutcome(
+  message: string,
+  details: string,
+  outcome: 'interrupted' | 'dropped' | 'preempted' = 'interrupted',
+): SkillExecutionOutcome {
   return {
     success: false,
     errorCode: 'interrupted',
     errorMessage: message,
     stateChanges: {},
     movement: {
-      outcome: details === 'stale_pending' ? 'dropped' : 'interrupted',
+      outcome,
       details,
     },
   };
@@ -101,7 +105,13 @@ export class MovementCoordinator {
 
       if (request.intent === 'critical' && this.active.intent !== 'critical') {
         if (this.pending) {
-          this.pending.resolve(interruptedOutcome('Pending movement was replaced by a critical request', 'replaced_by_critical'));
+          this.pending.resolve(
+            interruptedOutcome(
+              'Pending movement was replaced by a critical request',
+              'replaced_by_critical',
+              'dropped',
+            ),
+          );
         }
 
         this.pending = {
@@ -116,7 +126,13 @@ export class MovementCoordinator {
       }
 
       if (this.pending) {
-        this.pending.resolve(interruptedOutcome('Pending movement request was replaced by a newer request', 'pending_replaced'));
+        this.pending.resolve(
+          interruptedOutcome(
+            'Pending movement request was replaced by a newer request',
+            'pending_replaced',
+            'dropped',
+          ),
+        );
       }
 
       this.pending = {
@@ -141,7 +157,13 @@ export class MovementCoordinator {
     void this.executeWithTimeout(request, controller.signal)
       .then((outcome) => {
         if (activeRequest.settleInterruptedByPreemption) {
-          resolve(interruptedOutcome('Movement request was preempted by a critical request', 'preempted_by_critical'));
+          resolve(
+            interruptedOutcome(
+              'Movement request was preempted by a critical request',
+              'preempted_by_critical',
+              'preempted',
+            ),
+          );
           return;
         }
 
@@ -165,7 +187,13 @@ export class MovementCoordinator {
     this.pending = null;
 
     if (this.now() - queued.enqueuedAtMs > this.pendingTtlMs) {
-      queued.resolve(interruptedOutcome('Pending movement request expired before execution', 'stale_pending'));
+      queued.resolve(
+        interruptedOutcome(
+          'Pending movement request expired before execution',
+          'stale_pending',
+          'dropped',
+        ),
+      );
       return;
     }
 
