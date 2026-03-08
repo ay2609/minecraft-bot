@@ -22,7 +22,7 @@
 
 - [x] **EXEC-01**: All 10 core skills are implemented and callable by Model B: `move_to`, `follow_entity`, `place_block`, `break_block`, `craft_item`, `drop_item`, `equip_item`, `interact_block`, `attack_entity`, `send_chat`
 - [x] **EXEC-02**: Every skill call returns a structured `ExecutorResult` (never throws); all 10 error codes are used: `no_path`, `interrupted`, `insufficient_materials`, `inventory_full`, `tool_missing`, `unsafe`, `timed_out`, `target_unavailable`, `route_blocked`, `invalid_state`; every skill has a configurable max duration and returns `timed_out` if exceeded
-- [ ] **EXEC-03**: A movement mutex prevents concurrent pathfinding calls; a second `move_to` while one is in-flight queues or cancels cleanly — never causes oscillation
+- [x] **EXEC-03**: A movement mutex prevents concurrent pathfinding calls; a second `move_to` while one is in-flight queues or cancels cleanly — never causes oscillation
 
 ### Memory
 
@@ -99,7 +99,7 @@
 | PERC-03 | Phase 3 | Complete |
 | EXEC-01 | Phase 4 | Complete |
 | EXEC-02 | Phase 4 | Complete |
-| EXEC-03 | Phase 4 | Pending |
+| EXEC-03 | Phase 4 | Complete |
 | PLAN-01 | Phase 5 | Pending |
 | PLAN-02 | Phase 5 | Pending |
 | PLAN-03 | Phase 6 | Pending |

@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: 3
 status: Ready for execution
-stopped_at: Completed 04-skills-and-executor-01-PLAN.md
-last_updated: "2026-03-08T03:40:29.132Z"
+stopped_at: Completed 04-skills-and-executor-02-PLAN.md
+last_updated: "2026-03-08T03:49:57.052Z"
 last_activity: 2026-03-08
 progress:
   total_phases: 8
   completed_phases: 3
   total_plans: 13
-  completed_plans: 10
+  completed_plans: 11
   percent: 100
 ---
 
@@ -64,6 +64,7 @@ Progress: [██████████] 100%
 | Phase 03-perception-layer P02 | 16m | 3 tasks | 5 files |
 | Phase 03-perception-layer P03 | 8m | 3 tasks | 6 files |
 | Phase 04-skills-and-executor P01 | 24 min | 3 tasks | 11 files |
+| Phase 04-skills-and-executor P02 | 8m | 3 tasks | 9 files |
 
 ## Accumulated Context
 
@@ -100,6 +101,9 @@ Recent decisions affecting current work:
 - [Phase 04-skills-and-executor]: Executor defaults to one attempt per action and does not auto-retry failures.
 - [Phase 04-skills-and-executor]: Unknown or malformed actions map to compact invalid_state diagnostics instead of exceptions.
 - [Phase 04-skills-and-executor]: Failure-code semantics use precedence-based mapping so timeout always wins over lower-priority signals.
+- [Phase 04-skills-and-executor]: Coordinator returns explicit movement arbitration outcomes (executed, dropped, preempted, timed_out) alongside ExecutorErrorCode.
+- [Phase 04-skills-and-executor]: move_to and follow_entity validate minimal param contracts and fail closed when movement coordinator is unavailable.
+- [Phase 04-skills-and-executor]: Pending movement capacity stays fixed at one slot, replacing older pending requests to prevent goal churn.
 
 ### Pending Todos
 
@@ -114,6 +118,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-08T03:40:29.130Z
-Stopped at: Completed 04-skills-and-executor-01-PLAN.md
+Last session: 2026-03-08T03:49:57.050Z
+Stopped at: Completed 04-skills-and-executor-02-PLAN.md
 Resume file: None
