@@ -112,9 +112,7 @@ export interface PlannerContextMeta {
 
 export interface PlannerContextBundle {
   snapshot: PlannerSnapshotDigest;
-  intent: {
-    activeGoal: string | null;
-  };
+  intent: PlannerContextIntent;
   memory: MemoryAttachment;
   meta: PlannerContextMeta;
 }

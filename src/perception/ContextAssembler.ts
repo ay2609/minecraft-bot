@@ -48,6 +48,8 @@ export class ContextAssembler {
       snapshot: this.toSnapshotDigest(input.snapshot),
       intent: {
         activeGoal: input.intent.activeGoal,
+        activeSubgoalId: input.intent.activeSubgoalId,
+        inFlightSkill: input.intent.inFlightSkill,
       },
       memory: {
         semantic,
