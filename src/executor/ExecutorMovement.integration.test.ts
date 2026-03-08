@@ -1,4 +1,5 @@
 import { executeAction } from './Executor';
+import { MovementCoordinator } from './MovementCoordinator';
 import type { ActionItem } from '../types';
 import type { MovementRequest, SkillExecutionOutcome } from './types';
 
@@ -107,9 +108,55 @@ async function testMovementConflictOutcomeEmitsStructuredExecutorResult(): Promi
   assert(emitted.some((result) => result.errorCode === 'interrupted'), 'Expected interrupted outcome to be emitted');
 }
 
+async function testConflictingMovementRequestsAvoidGoalOscillation(): Promise<void> {
+  const coordinator = new MovementCoordinator({ pendingTtlMs: 1_000 });
+  let executeCalls = 0;
+  let firstResolve: ((value: SkillExecutionOutcome) => void) | null = null;
+
+  const performMovement = (_actionItem: ActionItem): Promise<SkillExecutionOutcome> => {
+    executeCalls += 1;
+    if (executeCalls === 1) {
+      return new Promise<SkillExecutionOutcome>((resolve) => {
+        firstResolve = resolve;
+      });
+    }
+
+    return Promise.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
+  };
+
+  const first = executeAction(createAction('move_to', 'osc-1'), {
+    movementCoordinator: coordinator,
+    performMovement: (actionItem) => performMovement(actionItem),
+  });
+  const second = executeAction(createAction('move_to', 'osc-2'), {
+    movementCoordinator: coordinator,
+    performMovement: (actionItem) => performMovement(actionItem),
+  });
+  const third = executeAction(createAction('move_to', 'osc-3'), {
+    movementCoordinator: coordinator,
+    performMovement: (actionItem) => performMovement(actionItem),
+  });
+
+  if (!firstResolve) {
+    throw new Error('Expected first movement promise resolver to be set');
+  }
+  firstResolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
+
+  const firstResult = await first;
+  const secondResult = await second;
+  const thirdResult = await third;
+
+  assert(firstResult.success === true, 'First movement should complete');
+  assert(secondResult.success === false, 'Replaced pending request should fail');
+  assert(secondResult.errorCode === 'interrupted', 'Replaced pending should map to interrupted');
+  assert(thirdResult.success === true, 'Latest pending request should execute');
+  assert(executeCalls === 2, `Expected two movement executes without churn, got ${executeCalls}`);
+}
+
 async function run(): Promise<void> {
   await testMoveAndFollowAreCoordinatorMediated();
   await testMovementConflictOutcomeEmitsStructuredExecutorResult();
+  await testConflictingMovementRequestsAvoidGoalOscillation();
 }
 
 void run();

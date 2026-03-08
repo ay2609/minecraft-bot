@@ -37,32 +37,43 @@ async function testRetainsSinglePendingAndDropsReplacedRequest(): Promise<void> 
     pendingTtlMs: 10_000,
   });
 
+  let executeCount = 0;
   const active = createDeferred<SkillExecutionOutcome>();
 
   const first = coordinator.requestMove({
     actionItem: createAction('move_to', 'first'),
     timeoutMs: 1_000,
     intent: 'normal',
-    execute: () => active.promise,
+    execute: () => {
+      executeCount += 1;
+      return active.promise;
+    },
   });
 
   const second = coordinator.requestMove({
     actionItem: createAction('move_to', 'second'),
     timeoutMs: 1_000,
     intent: 'normal',
-    execute: () => Promise.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} }),
+    execute: () => {
+      executeCount += 1;
+      return Promise.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
+    },
   });
 
   const third = coordinator.requestMove({
     actionItem: createAction('move_to', 'third'),
     timeoutMs: 1_000,
     intent: 'normal',
-    execute: () => Promise.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} }),
+    execute: () => {
+      executeCount += 1;
+      return Promise.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
+    },
   });
 
   const secondResult = await second;
   assert(secondResult.success === false, 'Replaced pending request should fail');
   assert(secondResult.errorCode === 'interrupted', 'Replaced pending request should map to interrupted');
+  assert(secondResult.movement?.outcome === 'dropped', 'Replaced pending request should emit dropped movement outcome');
 
   active.resolve({ success: true, errorCode: null, errorMessage: null, stateChanges: {} });
 
@@ -71,6 +82,7 @@ async function testRetainsSinglePendingAndDropsReplacedRequest(): Promise<void> 
 
   assert(firstResult.success === true, 'First active request should complete');
   assert(thirdResult.success === true, 'Latest pending request should execute');
+  assert(executeCount === 2, `Expected only active and final pending to execute, got ${executeCount}`);
 }
 
 async function testCriticalRequestPreemptsNonCriticalActive(): Promise<void> {
@@ -106,6 +118,7 @@ async function testCriticalRequestPreemptsNonCriticalActive(): Promise<void> {
 
   assert(firstResult.success === false, 'Preempted movement should fail');
   assert(firstResult.errorCode === 'interrupted', 'Preempted movement should return interrupted');
+  assert(firstResult.movement?.outcome === 'preempted', 'Preempted movement should include preempted outcome');
   assert(criticalResult.success === true, 'Critical movement should execute after preemption');
 }
 
@@ -142,6 +155,7 @@ async function testDropsStalePendingRequest(): Promise<void> {
   assert(firstResult.success === true, 'Active request should complete');
   assert(pendingResult.success === false, 'Stale pending should be dropped');
   assert(pendingResult.errorCode === 'interrupted', 'Stale pending should map to interrupted');
+  assert(pendingResult.movement?.outcome === 'dropped', 'Stale pending should include dropped outcome');
 }
 
 async function run(): Promise<void> {
