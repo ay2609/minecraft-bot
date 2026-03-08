@@ -119,8 +119,9 @@ export async function executeAction(
     );
   }
 
-  const resolveSkill = dependencies.resolveSkill ?? resolveSkillFromRegistry;
-  const handler = resolveSkill(actionItem.skill);
+  const resolveSkill = dependencies.resolveSkill
+    ?? ((skill: string, inputDependencies?: ExecutorDependencies) => resolveSkillFromRegistry(skill, inputDependencies));
+  const handler = resolveSkill(actionItem.skill, dependencies);
 
   if (!handler) {
     return emitResult(

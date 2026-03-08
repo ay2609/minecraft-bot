@@ -13,9 +13,14 @@ interface FakeMovementCoordinator {
 }
 
 function createAction(skill: 'move_to' | 'follow_entity', id: string): ActionItem {
+  const params: Record<string, unknown> = { id, x: 1, y: 64, z: 1 };
+  if (skill === 'follow_entity') {
+    params['targetId'] = `target-${id}`;
+  }
+
   return {
     skill,
-    params: { id, x: 1, y: 64, z: 1 },
+    params,
     expectedDurationSeconds: 5,
   };
 }

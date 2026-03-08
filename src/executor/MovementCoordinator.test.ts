@@ -31,7 +31,7 @@ function createDeferred<T>(): {
 }
 
 async function testRetainsSinglePendingAndDropsReplacedRequest(): Promise<void> {
-  let nowMs = 0;
+  const nowMs = 0;
   const coordinator = new MovementCoordinator({
     now: () => nowMs,
     pendingTtlMs: 10_000,

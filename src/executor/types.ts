@@ -27,9 +27,11 @@ export interface FailureMapping {
 }
 
 export interface ExecutorDependencies {
-  resolveSkill?: (skill: string) => SkillHandler | null;
+  resolveSkill?: (skill: string, dependencies?: ExecutorDependencies) => SkillHandler | null;
   mapFailure?: (error: unknown, actionItem: ActionItem) => FailureMapping;
   timeoutMsForSkill?: (skill: string, actionItem: ActionItem) => number;
+  movementCoordinator?: MovementCoordinatorLike;
+  performMovement?: (actionItem: ActionItem, signal: AbortSignal) => Promise<SkillExecutionOutcome>;
   eventBus?: {
     emit: (event: 'executor:result', result: ExecutorResult) => boolean;
   };
@@ -43,4 +45,8 @@ export interface MovementRequest {
   timeoutMs: number;
   intent: MovementIntent;
   execute: (signal: AbortSignal) => Promise<SkillExecutionOutcome>;
+}
+
+export interface MovementCoordinatorLike {
+  requestMove: (request: MovementRequest) => Promise<SkillExecutionOutcome>;
 }

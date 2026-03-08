@@ -1,5 +1,7 @@
 import type { ActionItem, CoreSkillName } from '../types';
-import type { SkillExecutionOutcome, SkillHandler } from './types';
+import { executeFollowEntity } from './skills/followEntity';
+import { executeMoveTo } from './skills/moveTo';
+import type { ExecutorDependencies, SkillExecutionOutcome, SkillHandler } from './types';
 
 export const requiredSkillNames: CoreSkillName[] = [
   'move_to',
@@ -39,6 +41,14 @@ const registry: Record<CoreSkillName, SkillHandler> = {
   send_chat: notImplemented('send_chat'),
 };
 
-export function resolveSkill(skill: string): SkillHandler | null {
+export function resolveSkill(skill: string, dependencies: ExecutorDependencies = {}): SkillHandler | null {
+  if (skill === 'move_to') {
+    return (actionItem, context) => executeMoveTo(actionItem, context, dependencies);
+  }
+
+  if (skill === 'follow_entity') {
+    return (actionItem, context) => executeFollowEntity(actionItem, context, dependencies);
+  }
+
   return registry[skill as CoreSkillName] ?? null;
 }
