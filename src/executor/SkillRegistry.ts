@@ -1,6 +1,9 @@
 import type { ActionItem, CoreSkillName } from '../types';
 import { executeAttackEntity } from './skills/attackEntity';
 import { executeBreakBlock } from './skills/breakBlock';
+import { executeCraftItem } from './skills/craftItem';
+import { executeDropItem } from './skills/dropItem';
+import { executeEquipItem } from './skills/equipItem';
 import { executeFollowEntity } from './skills/followEntity';
 import { executeInteractBlock } from './skills/interactBlock';
 import { executeMoveTo } from './skills/moveTo';
@@ -61,6 +64,18 @@ export function resolveSkill(skill: string, dependencies: ExecutorDependencies =
 
   if (skill === 'break_block') {
     return (actionItem, context) => executeBreakBlock(actionItem, context);
+  }
+
+  if (skill === 'craft_item') {
+    return (actionItem, context) => executeCraftItem(actionItem, context);
+  }
+
+  if (skill === 'drop_item') {
+    return (actionItem, context) => executeDropItem(actionItem, context);
+  }
+
+  if (skill === 'equip_item') {
+    return (actionItem, context) => executeEquipItem(actionItem, context);
   }
 
   if (skill === 'interact_block') {

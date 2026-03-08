@@ -27,6 +27,9 @@ async function testCraftItemExecutesWithRecipeAndMaterials(): Promise<void> {
         oak_log: 1,
       },
     },
+    recipeYields: {
+      oak_planks: 4,
+    },
   }));
 
   assert(result.success === true, 'craft_item should succeed when recipe and materials exist');
