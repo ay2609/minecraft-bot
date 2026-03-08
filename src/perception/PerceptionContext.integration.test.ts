@@ -210,10 +210,38 @@ async function testSlowMemoryDoesNotBlockContextAssemblyCadence(): Promise<void>
   );
 }
 
+async function testAssembleFromLatestSnapshotPublishesPlannerBoundary(): Promise<void> {
+  const bus = new TypedEventBus();
+  const assembler = new ContextAssembler({ memoryTimeoutMs: 30, maxChars: 4_000 });
+  let boundaryEvents = 0;
+
+  bus.on('planner:context-ready', () => {
+    boundaryEvents += 1;
+  });
+
+  const bundle = await assembler.assembleFromLatestSnapshot({
+    getLatestSnapshot: () => createSnapshot(2_000),
+    intent: {
+      activeGoal: 'collect oak logs',
+      activeSubgoalId: 'sg-collect',
+      inFlightSkill: 'gather',
+    },
+    retrieveMemory: async () => ({
+      semantic: [],
+      episodic: [],
+    }),
+    events: bus,
+  });
+
+  assert(bundle !== null, 'Expected assembled context from latest snapshot');
+  assert(boundaryEvents === 1, `Expected planner boundary event once, got ${boundaryEvents}`);
+}
+
 async function run(): Promise<void> {
   await testPlannerContextBoundaryEventIsEmitted();
   await testMemoryQueryUsesGoalAndProximityRelevance();
   await testSlowMemoryDoesNotBlockContextAssemblyCadence();
+  await testAssembleFromLatestSnapshotPublishesPlannerBoundary();
   console.log('Perception planner-context integration: PASS');
 }
 
