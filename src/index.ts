@@ -3,8 +3,14 @@ import type { Bot } from 'mineflayer';
 import { config, type Config } from './config';
 import { executeAction } from './executor/Executor';
 import { eventBus } from './events/EventBus';
-import { initializeMemory, type InitializeMemoryOptions, type InitializedMemory } from './memory';
+import {
+  createPlannerMemoryRetriever,
+  initializeMemory,
+  type InitializeMemoryOptions,
+  type InitializedMemory,
+} from './memory';
 import { buildPerceptionSnapshot } from './perception/SnapshotBuilder';
+import { ContextAssembler } from './perception/ContextAssembler';
 import { PerceptionService, type PerceptionServiceOptions } from './perception/PerceptionService';
 import { FireworksLLMClient } from './planner/FireworksLLMClient';
 import { TacticalPlanner } from './planner/TacticalPlanner';
@@ -331,6 +337,11 @@ export function initializeApplication(options: InitializeApplicationOptions = {}
       buildSnapshot: createSnapshotFactory(bot, memory, recentFailures),
       eventBus,
     });
+    const contextAssembler = new ContextAssembler();
+    const retrievePlannerMemory = createPlannerMemoryRetriever({
+      semantic: memory.semantic,
+      episodic: memory.episodic,
+    });
 
     const llmClient = new FireworksLLMClient(config.fireworks.apiKey, config.fireworks.modelId);
     const tacticalPlanner = new TacticalPlanner(llmClient, memory.workingMemory, eventBus, config.tactical);
@@ -356,15 +367,47 @@ export function initializeApplication(options: InitializeApplicationOptions = {}
       });
     };
 
+    const onPerceptionUpdated = (snapshot: PerceptionSnapshot): void => {
+      const workingMemorySnapshot = memory.workingMemory.getSnapshot();
+      const activeGoal = workingMemorySnapshot.activePlan?.goal ?? null;
+      const activeSubgoalId = workingMemorySnapshot.activeSubgoalId;
+      const inFlightSkill = workingMemorySnapshot.execution.inFlightAction?.skill ?? null;
+
+      const retrieveMemory = () => retrievePlannerMemory({
+        position: snapshot.position,
+        activeGoal,
+      });
+
+      void contextAssembler
+        .assembleAndPublishPlannerContext(
+          {
+            snapshot,
+            intent: {
+              activeGoal,
+              activeSubgoalId,
+              inFlightSkill,
+            },
+            retrieveMemory,
+          },
+          eventBus,
+        )
+        .catch((error: unknown) => {
+          const message = error instanceof Error ? error.message : String(error);
+          console.error(`[planner-context] assemble failed: ${message}`);
+        });
+    };
+
     eventBus.on('bot:spawned', onBotSpawned);
     eventBus.on('escalate:to-strategic', onEscalateToStrategic);
     eventBus.on('tactical:queue-ready', onTacticalQueueReady);
+    eventBus.on('perception:updated', onPerceptionUpdated);
 
     const shutdownPerception = (): void => {
       eventBus.off('executor:result', onExecutorResult);
       eventBus.off('bot:spawned', onBotSpawned);
       eventBus.off('escalate:to-strategic', onEscalateToStrategic);
       eventBus.off('tactical:queue-ready', onTacticalQueueReady);
+      eventBus.off('perception:updated', onPerceptionUpdated);
       tacticalPlanner.stop();
       perception.stop();
     };
