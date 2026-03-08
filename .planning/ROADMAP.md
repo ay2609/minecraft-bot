@@ -90,7 +90,11 @@ Plans:
   1. A live call to the Fireworks.ai endpoint returns a valid JSON response; JSON parse failures are retried once and context-length / rate-limit errors surface as structured errors rather than uncaught exceptions
   2. On completion or failure of each action, Model B receives the assembled context, produces a valid JSON action queue, and the executor runs the next skill — the bot makes observable progress on a simple goal (e.g., move to a block and break it) without human intervention
   3. When Model B receives an unrecoverable parse failure, it emits a `WAIT` action rather than crashing or looping — the bot pauses and the failure is logged
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 05-01-PLAN.md — FireworksLLMClient, tactical Zod schema, and Model B system prompt
+- [ ] 05-02-PLAN.md — TacticalPlanner event loop, watchdog, failure policies, and WAIT skill registration
+- [ ] 05-03-PLAN.md — Config extension, bot startup wiring, and end-to-end smoke verification
 
 ### Phase 6: Strategic Planner and Autonomous Loop
 **Goal**: Model A selects long-horizon goals, produces subgoal sequences, and hands them to Model B; the bot pursues goals autonomously when idle
@@ -135,7 +139,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 2. Memory Persistence | 3/3 | Complete   | 2026-03-07 |
 | 3. Perception Layer | 3/3 | Complete   | 2026-03-08 |
 | 4. Skills and Executor | 4/4 | Complete | 2026-03-08 |
-| 5. LLM Client and Tactical Planner | 0/TBD | Not started | - |
+| 5. LLM Client and Tactical Planner | 0/3 | Not started | - |
 | 6. Strategic Planner and Autonomous Loop | 0/TBD | Not started | - |
 | 7. Recovery System | 0/TBD | Not started | - |
 | 8. Observability and Player Interaction | 0/TBD | Not started | - |
