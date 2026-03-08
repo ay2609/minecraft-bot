@@ -40,6 +40,17 @@ export interface Config {
     churnWindowSize: number;
     churnCooldownMs: number;
   };
+  strategic: {
+    idleCooldownMs: number;
+    strategicCooldownMs: number;
+    survivalDebounceMs: number;
+    survivalHealthThreshold: number;
+    survivalFoodThreshold: number;
+    stableHealthThreshold: number;
+    stableFoodThreshold: number;
+    chatDedupeBucketMs: number;
+    chatDedupeMaxEntries: number;
+  };
 }
 
 function parseNumberEnv(value: string | undefined, fallback: number): number {
@@ -106,5 +117,16 @@ export const config: Config = {
     churnOpsThreshold: parsePositiveNumberEnv(process.env['TACTICAL_CHURN_OPS_THRESHOLD'], 5),
     churnWindowSize: parsePositiveNumberEnv(process.env['TACTICAL_CHURN_WINDOW_SIZE'], 3),
     churnCooldownMs: parsePositiveNumberEnv(process.env['TACTICAL_CHURN_COOLDOWN_MS'], 30000),
+  },
+  strategic: {
+    idleCooldownMs: parsePositiveNumberEnv(process.env['STRATEGIC_IDLE_COOLDOWN_MS'], 5000),
+    strategicCooldownMs: parsePositiveNumberEnv(process.env['STRATEGIC_COOLDOWN_MS'], 10000),
+    survivalDebounceMs: parsePositiveNumberEnv(process.env['STRATEGIC_SURVIVAL_DEBOUNCE_MS'], 15000),
+    survivalHealthThreshold: parsePositiveNumberEnv(process.env['STRATEGIC_SURVIVAL_HEALTH_THRESHOLD'], 8),
+    survivalFoodThreshold: parsePositiveNumberEnv(process.env['STRATEGIC_SURVIVAL_FOOD_THRESHOLD'], 4),
+    stableHealthThreshold: parsePositiveNumberEnv(process.env['STRATEGIC_STABLE_HEALTH_THRESHOLD'], 16),
+    stableFoodThreshold: parsePositiveNumberEnv(process.env['STRATEGIC_STABLE_FOOD_THRESHOLD'], 14),
+    chatDedupeBucketMs: parsePositiveNumberEnv(process.env['STRATEGIC_CHAT_DEDUPE_BUCKET_MS'], 5000),
+    chatDedupeMaxEntries: parsePositiveNumberEnv(process.env['STRATEGIC_CHAT_DEDUPE_MAX_ENTRIES'], 50),
   },
 };
