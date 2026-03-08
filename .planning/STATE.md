@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: 4
 status: verifying
-stopped_at: Completed 05-01-PLAN.md
-last_updated: "2026-03-08T06:48:27.534Z"
+stopped_at: Completed 05-02-PLAN.md
+last_updated: "2026-03-08T07:01:31.561Z"
 last_activity: 2026-03-08
 progress:
   total_phases: 8
   completed_phases: 4
   total_plans: 16
-  completed_plans: 14
+  completed_plans: 15
   percent: 100
 ---
 
@@ -68,6 +68,7 @@ Progress: [██████████] 100%
 | Phase 04-skills-and-executor P03 | 7m | 3 tasks | 12 files |
 | Phase 04-skills-and-executor P04 | 5 min | 3 tasks | 8 files |
 | Phase 05-llm-client-and-tactical-planner P01 | 5min | 2 tasks | 5 files |
+| Phase 05-llm-client-and-tactical-planner P02 | 18min | 2 tasks | 6 files |
 
 ## Accumulated Context
 
@@ -115,6 +116,9 @@ Recent decisions affecting current work:
 - [Phase 05-llm-client-and-tactical-planner]: FireworksLLMClient uses maxRetries:0 on OpenAI SDK to surface RateLimitError immediately — client manages its own retry logic
 - [Phase 05-llm-client-and-tactical-planner]: finish_reason=length returns context_length without consuming a retry — truncated output cannot be fixed by retrying
 - [Phase 05-llm-client-and-tactical-planner]: LLMCallFn injection seam in FireworksLLMClient constructor for unit-testing without real API credentials
+- [Phase 05-llm-client-and-tactical-planner]: Named class property arrow functions for handleExecutorResult/handleContextReady ensure correct events.off() deregistration in stop()
+- [Phase 05-llm-client-and-tactical-planner]: WAIT ActionQueue emitted on all LLM failure kinds — tactical:queue-ready never dropped
+- [Phase 05-llm-client-and-tactical-planner]: recordFailure() called before triggerTactical() on failure results so next context bundle includes failure details
 
 ### Pending Todos
 
@@ -129,6 +133,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-08T06:48:27.532Z
-Stopped at: Completed 05-01-PLAN.md
+Last session: 2026-03-08T07:01:31.558Z
+Stopped at: Completed 05-02-PLAN.md
 Resume file: None
