@@ -21,7 +21,7 @@ export const GoalPlanSchema = z.object({
 });
 
 export const ChatDecisionSchema = z.object({
-  requestSummary: z.string(),
+  requestSummary: z.string().optional(),
   decision: z.enum(['switch', 'defer']),
   responseMessage: z.string().nullable(),
 });

@@ -265,11 +265,8 @@ export class StrategicPlanner {
 
     this.applyPlanHandoff(output.plan);
 
-    // If chat decision includes a response message, emit a send_chat action via events
     if (output.chatDecision?.responseMessage) {
-      // Emit as a synthetic action; consumers can handle as appropriate
-      // Using bot:chat-reply pattern — no formal event channel for this yet
-      console.log(`[StrategicPlanner] Chat response: ${output.chatDecision.responseMessage}`);
+      this.events.emit('strategic:chat-reply', output.chatDecision.responseMessage);
     }
 
     this.strategicCallInProgress = false;

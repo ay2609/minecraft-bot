@@ -394,15 +394,21 @@ export function initializeApplication(options: InitializeApplicationOptions = {}
         });
     };
 
+    const onStrategicChatReply = (message: string): void => {
+      bot.chat(message);
+    };
+
     eventBus.on('bot:spawned', onBotSpawned);
     eventBus.on('tactical:queue-ready', onTacticalQueueReady);
     eventBus.on('perception:updated', onPerceptionUpdated);
+    eventBus.on('strategic:chat-reply', onStrategicChatReply);
 
     const shutdownPerception = (): void => {
       eventBus.off('executor:result', onExecutorResult);
       eventBus.off('bot:spawned', onBotSpawned);
       eventBus.off('tactical:queue-ready', onTacticalQueueReady);
       eventBus.off('perception:updated', onPerceptionUpdated);
+      eventBus.off('strategic:chat-reply', onStrategicChatReply);
       tacticalPlanner.stop();
       strategicPlanner.stop();
       perception.stop();

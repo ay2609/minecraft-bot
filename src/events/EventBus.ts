@@ -16,6 +16,7 @@ export interface BotEvents {
   'perception:updated': [snapshot: PerceptionSnapshot];
   'perception:dirty': [payload: { reason: string; burst: boolean }];
   'strategic:plan-ready': [plan: GoalPlan];
+  'strategic:chat-reply': [message: string];
   'tactical:queue-ready': [queue: ActionQueue];
   'executor:result': [result: ExecutorResult];
   'escalate:to-strategic': [payload: { reason: string; consecutiveFailures: number }];

@@ -19,6 +19,9 @@ Schema:
   "chatDecision": null
 }
 
+When triggered by chat, chatDecision looks like:
+  "chatDecision": {"requestSummary": "player asked X", "decision": "switch | defer", "responseMessage": "reply text or null"}
+
 Priority rules:
 - Select priority: 'survival' ONLY when health <= 8 OR food <= 4, AND a threat or starvation signal is present.
 - If isSurvivalStable is true (health >= 16 AND food >= 14), you MUST NOT select priority: 'survival'.
@@ -34,7 +37,7 @@ Minecraft critical progression path:
 - Stage 2: Craft wooden_pickaxe, mine stone (cobblestone x 12)
 - Stage 3: Craft stone_pickaxe (marks completion of early progression)
 
-Chat trigger rule: When triggerCause contains 'chat', always include a chatDecision object with decision ('switch' or 'defer') and optional responseMessage.
+Chat trigger rule: When triggerCause contains 'chat', always include a chatDecision object with requestSummary (what the player asked), decision ('switch' or 'defer'), and responseMessage (what to say back, or null).
 
 Example output:
 {
