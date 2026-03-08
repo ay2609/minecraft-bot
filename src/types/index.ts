@@ -123,6 +123,13 @@ export interface WorkingMemoryRestoreMetadata {
   checkpointId: string | null;
 }
 
+export interface WorkingMemoryFailureRecord {
+  errorCode: string | null;
+  errorMessage: string | null;
+  skill: string;
+  timestampMs: number;
+}
+
 export interface WorkingMemorySnapshot {
   activePlan: GoalPlan | null;
   activeSubgoalId: string | null;
@@ -130,6 +137,7 @@ export interface WorkingMemorySnapshot {
   constraints: Record<string, unknown>;
   execution: WorkingMemoryExecutionState;
   restore: WorkingMemoryRestoreMetadata;
+  recentFailures: WorkingMemoryFailureRecord[];
 }
 
 export interface PlanCheckpointPayload {

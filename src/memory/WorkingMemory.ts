@@ -3,9 +3,12 @@ import type {
   ActionQueue,
   GoalPlan,
   PlanCheckpointCommitInput,
+  WorkingMemoryFailureRecord,
   WorkingMemoryRestoreMetadata,
   WorkingMemorySnapshot,
 } from '../types/index';
+
+const RECENT_FAILURES_LIMIT = 10;
 
 function cloneValue<T>(value: T): T {
   return structuredClone(value);
@@ -30,6 +33,7 @@ function createInitialState(): WorkingMemorySnapshot {
       lockedSkill: null,
     },
     restore: createDefaultRestoreMetadata(),
+    recentFailures: [],
   };
 }
 
@@ -58,6 +62,13 @@ export class WorkingMemory {
 
   setConstraints(constraints: Record<string, unknown>): void {
     this.state.constraints = cloneValue(constraints);
+  }
+
+  recordFailure(failure: WorkingMemoryFailureRecord): void {
+    this.state.recentFailures.push(cloneValue(failure));
+    if (this.state.recentFailures.length > RECENT_FAILURES_LIMIT) {
+      this.state.recentFailures.shift();
+    }
   }
 
   clearExecutionTransients(): void {
