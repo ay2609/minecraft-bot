@@ -31,9 +31,7 @@ async function testThrowingSkillNormalizesFailure(): Promise<void> {
   };
 
   const result = await executeAction(action, {
-    resolveSkill: () => async () => {
-      throw new Error('boom');
-    },
+    resolveSkill: () => () => Promise.reject(new Error('boom')),
     mapFailure: () => ({
       errorCode: 'route_blocked',
       errorMessage: 'mapped failure',
@@ -75,4 +73,4 @@ async function run(): Promise<void> {
   await testTimeoutProducesTimedOutCode();
 }
 
-run();
+void run();

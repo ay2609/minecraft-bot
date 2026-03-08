@@ -1,9 +1,10 @@
 import { config } from '../config';
 import { eventBus } from '../events/EventBus';
 import type { ActionItem, ExecutorErrorCode, ExecutorResult } from '../types';
+import { mapExecutorFailure } from './failureMapping';
+import { resolveSkill as resolveSkillFromRegistry } from './SkillRegistry';
 import type {
   ExecutorDependencies,
-  FailureMapping,
   SkillExecutionOutcome,
 } from './types';
 
@@ -44,14 +45,6 @@ function normalizeOutcome(raw: SkillExecutionOutcome): SkillExecutionOutcome {
     errorCode: raw.errorCode ?? 'invalid_state',
     errorMessage: raw.errorMessage ?? 'Skill returned an unsuccessful result without details',
     stateChanges: raw.stateChanges ?? {},
-  };
-}
-
-function defaultFailureMapping(error: unknown): FailureMapping {
-  const message = error instanceof Error ? error.message : String(error);
-  return {
-    errorCode: 'invalid_state',
-    errorMessage: message.slice(0, 180),
   };
 }
 
@@ -126,7 +119,7 @@ export async function executeAction(
     );
   }
 
-  const resolveSkill = dependencies.resolveSkill ?? (() => null);
+  const resolveSkill = dependencies.resolveSkill ?? resolveSkillFromRegistry;
   const handler = resolveSkill(actionItem.skill);
 
   if (!handler) {
@@ -174,7 +167,7 @@ export async function executeAction(
       );
     }
 
-    const mapped = (dependencies.mapFailure ?? defaultFailureMapping)(error, actionItem);
+    const mapped = (dependencies.mapFailure ?? ((value: unknown) => mapExecutorFailure(value)))(error, actionItem);
     return emitResult(
       failureResult(
         actionItem,
