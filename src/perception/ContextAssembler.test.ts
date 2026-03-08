@@ -121,6 +121,8 @@ async function testAssemblesCompactStructuredContext(): Promise<void> {
   const bundle = await assembler.assemblePlannerContext(createInput());
 
   assertEqual(bundle.intent.activeGoal, 'collect logs', 'Expected active goal in context');
+  assertEqual(bundle.intent.activeSubgoalId, 'sg-1', 'Expected active subgoal id in context');
+  assertEqual(bundle.intent.inFlightSkill, 'move_to', 'Expected in-flight skill in context');
   assert(bundle.memory.semantic.length === 2, 'Expected semantic memory slice to be included');
   assert(bundle.memory.episodic.length === 3, 'Expected episodic memory slice to be included');
   assertEqual(bundle.meta.memorySource, 'live', 'Expected live memory source for normal path');
