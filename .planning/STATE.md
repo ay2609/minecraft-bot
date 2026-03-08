@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: 3
 status: Ready for execution
-stopped_at: Completed 04-skills-and-executor-02-PLAN.md
-last_updated: "2026-03-08T03:49:57.052Z"
+stopped_at: Completed 04-03-PLAN.md
+last_updated: "2026-03-08T03:58:52.979Z"
 last_activity: 2026-03-08
 progress:
   total_phases: 8
   completed_phases: 3
   total_plans: 13
-  completed_plans: 11
+  completed_plans: 12
   percent: 100
 ---
 
@@ -65,6 +65,7 @@ Progress: [██████████] 100%
 | Phase 03-perception-layer P03 | 8m | 3 tasks | 6 files |
 | Phase 04-skills-and-executor P01 | 24 min | 3 tasks | 11 files |
 | Phase 04-skills-and-executor P02 | 8m | 3 tasks | 9 files |
+| Phase 04-skills-and-executor P03 | 7m | 3 tasks | 12 files |
 
 ## Accumulated Context
 
@@ -104,6 +105,9 @@ Recent decisions affecting current work:
 - [Phase 04-skills-and-executor]: Coordinator returns explicit movement arbitration outcomes (executed, dropped, preempted, timed_out) alongside ExecutorErrorCode.
 - [Phase 04-skills-and-executor]: move_to and follow_entity validate minimal param contracts and fail closed when movement coordinator is unavailable.
 - [Phase 04-skills-and-executor]: Pending movement capacity stays fixed at one slot, replacing older pending requests to prevent goal churn.
+- [Phase 04-skills-and-executor]: High-risk skills reject only hard-invalid requests up front and classify unsafe from attempted execution/post-condition evidence.
+- [Phase 04-skills-and-executor]: Failure mapping merges structured attempt signals with text patterns and applies deterministic precedence (timed_out > target_unavailable > unsafe > route_blocked).
+- [Phase 04-skills-and-executor]: Movement arbitration outcomes are preserved in ExecutorResult metadata for planner-visible runtime diagnostics.
 
 ### Pending Todos
 
@@ -118,6 +122,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-08T03:49:57.050Z
-Stopped at: Completed 04-skills-and-executor-02-PLAN.md
+Last session: 2026-03-08T03:58:52.977Z
+Stopped at: Completed 04-03-PLAN.md
 Resume file: None
