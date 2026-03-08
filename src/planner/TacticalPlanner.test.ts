@@ -9,6 +9,7 @@ import type { ActionQueue, ExecutorResult, ActionItem } from '../types';
 import type { WorkingMemorySnapshot, WorkingMemoryFailureRecord } from '../types/index';
 import { TacticalPlanner, DEFAULT_TACTICAL_CONFIG } from './TacticalPlanner';
 import type { TacticalConfig } from './TacticalPlanner';
+import type { PlannerContextBundle } from '../perception/types';
 
 // ─── Stubs ─────────────────────────────────────────────────────────────────
 
@@ -131,6 +132,53 @@ function makeConfig(overrides: Partial<TacticalConfig> = {}): TacticalConfig {
   return { ...DEFAULT_TACTICAL_CONFIG, ...overrides };
 }
 
+function makePlannerContextBundle(): PlannerContextBundle {
+  return {
+    snapshot: {
+      position: { x: 12, y: 64, z: -3 },
+      biome: 'plains',
+      currentAction: 'move_to',
+      nearbyEntities: ['cow', 'sheep'],
+      nearbyBlocks: ['oak_log', 'crafting_table'],
+    },
+    intent: {
+      activeGoal: 'collect oak logs',
+      activeSubgoalId: 'sg-test',
+      inFlightSkill: 'move_to',
+    },
+    memory: {
+      semantic: [
+        {
+          label: 'oak_forest',
+          position: { x: 20, y: 64, z: -8 },
+          distance: 11.3,
+          confidence: 0.92,
+          lastSeenAt: '2026-03-08T00:00:00.000Z',
+        },
+      ],
+      episodic: [
+        {
+          goal: 'collect oak logs',
+          action: 'break_block',
+          outcome: 'success',
+          failureReason: null,
+          createdAt: '2026-03-08T00:01:00.000Z',
+        },
+      ],
+    },
+    meta: {
+      memorySource: 'live',
+      memoryTimedOut: false,
+      truncation: {
+        applied: false,
+        droppedEpisodic: 0,
+        droppedSemantic: 0,
+        reason: null,
+      },
+    },
+  };
+}
+
 // ─── Test Helpers ───────────────────────────────────────────────────────────
 
 function getEmitted(bus: ReturnType<typeof makeEventBusStub>, event: string) {
@@ -186,6 +234,48 @@ async function run(): Promise<void> {
     assert.equal(queues.length, 1, 'tactical:queue-ready should be emitted once');
     const emittedQueue = queues[0].args[0] as ActionQueue;
     assert.equal(emittedQueue.actions[0].skill, 'move_to', 'emitted queue should have finalQueue from LLM output');
+
+    planner.stop();
+  });
+
+  // Test 1b: planner:context-ready updates LLM payload to include non-null context
+  await test('Test 1b: planner:context-ready makes LLM user payload context non-null', async () => {
+    let capturedMessages: unknown[] | null = null;
+    const llm = {
+      call(messages: unknown[]): Promise<LLMResult> {
+        capturedMessages = messages;
+        return Promise.resolve({
+          ok: true,
+          data: makeTacticalOutput({ finalQueue: [] }),
+        });
+      },
+    };
+    const mem = makeWorkingMemoryStub();
+    const bus = makeEventBusStub();
+
+    const planner = new TacticalPlanner(llm as never, mem as never, bus as never, makeConfig());
+    planner.start();
+
+    triggerHandler(bus, 'planner:context-ready', makePlannerContextBundle());
+    triggerHandler(bus, 'executor:result', makeExecutorResult({ success: true }));
+    await sleep(10);
+
+    assert.ok(capturedMessages, 'LLM should receive messages payload');
+    const userMessage = (capturedMessages as Array<{ role?: string; content?: string }>)[1];
+    assert.equal(userMessage?.role, 'user', 'Second message should be user payload');
+    const parsedPayload = JSON.parse(userMessage?.content ?? '{}') as {
+      context: null | {
+        position: unknown;
+        currentAction: unknown;
+        nearbyEntities: unknown;
+        nearbyBlocks: unknown;
+        memory: unknown;
+      };
+    };
+
+    assert.notEqual(parsedPayload.context, null, 'Context must not be null once planner context is ready');
+    assert.ok(parsedPayload.context?.position, 'Context should include snapshot position');
+    assert.ok(parsedPayload.context?.memory, 'Context should include memory attachment');
 
     planner.stop();
   });
