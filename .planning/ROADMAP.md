@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Project Scaffolding** - TypeScript project boots, shared types compile, EventBus wires layers together
 - [x] **Phase 2: Memory Persistence** - SQLite schemas initialize on startup; working, semantic, and episodic memory survive restarts (completed 2026-03-07)
-- [ ] **Phase 3: Perception Layer** - Bot produces debounced PerceptionSnapshot at 1-2 Hz; context assembler composes prompt-ready context
+- [x] **Phase 3: Perception Layer** - Bot produces debounced PerceptionSnapshot at 1-2 Hz; context assembler composes prompt-ready context (completed 2026-03-08)
 - [ ] **Phase 4: Skills and Executor** - All 10 skills run against a live server with structured error codes; no LLM involved
 - [ ] **Phase 5: LLM Client and Tactical Planner** - Fireworks client calls succeed; Model B manages the action queue end-to-end
 - [ ] **Phase 6: Strategic Planner and Autonomous Loop** - Model A selects goals and hands off to Model B; bot pursues goals without commands
@@ -124,7 +124,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 |-------|----------------|--------|-----------|
 | 1. Project Scaffolding | 3/3 | Complete | 2026-03-07 |
 | 2. Memory Persistence | 3/3 | Complete   | 2026-03-07 |
-| 3. Perception Layer | 2/3 | In Progress |  |
+| 3. Perception Layer | 3/3 | Complete   | 2026-03-08 |
 | 4. Skills and Executor | 0/TBD | Not started | - |
 | 5. LLM Client and Tactical Planner | 0/TBD | Not started | - |
 | 6. Strategic Planner and Autonomous Loop | 0/TBD | Not started | - |
