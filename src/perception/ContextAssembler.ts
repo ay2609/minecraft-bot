@@ -1,3 +1,4 @@
+import type { TypedEventBus } from '../events/EventBus';
 import type {
   ContextAssemblerOptions,
   MemoryAttachment,
@@ -66,6 +67,34 @@ export class ContextAssembler {
 
     this.applyBudget(bundle);
     return bundle;
+  }
+
+  async assembleAndPublishPlannerContext(
+    input: PlannerContextInput,
+    events: Pick<TypedEventBus, 'emit'>,
+  ): Promise<PlannerContextBundle> {
+    const bundle = await this.assemblePlannerContext(input);
+    events.emit('planner:context-ready', bundle);
+    return bundle;
+  }
+
+  async assembleFromLatestSnapshot(
+    options: {
+      getLatestSnapshot: () => PlannerContextInput['snapshot'] | null;
+      intent: PlannerContextInput['intent'];
+      retrieveMemory: PlannerContextInput['retrieveMemory'];
+    },
+  ): Promise<PlannerContextBundle | null> {
+    const snapshot = options.getLatestSnapshot();
+    if (snapshot === null) {
+      return null;
+    }
+
+    return this.assemblePlannerContext({
+      snapshot,
+      intent: options.intent,
+      retrieveMemory: options.retrieveMemory,
+    });
   }
 
   private async resolveMemory(input: PlannerContextInput): Promise<MemoryResolution> {

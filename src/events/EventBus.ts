@@ -1,4 +1,5 @@
 import { EventEmitter } from 'events';
+import type { PlannerContextBundle } from '../perception/types';
 import type {
   ActionQueue,
   ExecutorResult,
@@ -25,6 +26,7 @@ export interface BotEvents {
   'memory:restore-complete': [payload: WorkingMemoryRestoreCompleteEvent];
   'memory:restore-failed': [payload: WorkingMemoryRestoreFailedEvent];
   'memory:persistence-error': [payload: MemoryPersistenceErrorEvent];
+  'planner:context-ready': [payload: PlannerContextBundle];
 }
 
 export class TypedEventBus extends EventEmitter {
