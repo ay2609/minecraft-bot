@@ -1,6 +1,11 @@
 import type { ActionItem, CoreSkillName } from '../types';
+import { executeAttackEntity } from './skills/attackEntity';
+import { executeBreakBlock } from './skills/breakBlock';
 import { executeFollowEntity } from './skills/followEntity';
+import { executeInteractBlock } from './skills/interactBlock';
 import { executeMoveTo } from './skills/moveTo';
+import { executePlaceBlock } from './skills/placeBlock';
+import { executeSendChat } from './skills/sendChat';
 import type { ExecutorDependencies, SkillExecutionOutcome, SkillHandler } from './types';
 
 export const requiredSkillNames: CoreSkillName[] = [
@@ -48,6 +53,26 @@ export function resolveSkill(skill: string, dependencies: ExecutorDependencies =
 
   if (skill === 'follow_entity') {
     return (actionItem, context) => executeFollowEntity(actionItem, context, dependencies);
+  }
+
+  if (skill === 'place_block') {
+    return (actionItem, context) => executePlaceBlock(actionItem, context);
+  }
+
+  if (skill === 'break_block') {
+    return (actionItem, context) => executeBreakBlock(actionItem, context);
+  }
+
+  if (skill === 'interact_block') {
+    return (actionItem, context) => executeInteractBlock(actionItem, context);
+  }
+
+  if (skill === 'attack_entity') {
+    return (actionItem, context) => executeAttackEntity(actionItem, context);
+  }
+
+  if (skill === 'send_chat') {
+    return (actionItem, context) => executeSendChat(actionItem, context);
   }
 
   return registry[skill as CoreSkillName] ?? null;
