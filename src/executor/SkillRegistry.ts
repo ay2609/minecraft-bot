@@ -9,6 +9,7 @@ import { executeInteractBlock } from './skills/interactBlock';
 import { executeMoveTo } from './skills/moveTo';
 import { executePlaceBlock } from './skills/placeBlock';
 import { executeSendChat } from './skills/sendChat';
+import { executeWait } from './skills/wait';
 import type { ExecutorDependencies, SkillExecutionOutcome, SkillHandler } from './types';
 
 export const requiredSkillNames: CoreSkillName[] = [
@@ -50,6 +51,10 @@ const registry: Record<CoreSkillName, SkillHandler> = {
 };
 
 export function resolveSkill(skill: string, dependencies: ExecutorDependencies = {}): SkillHandler | null {
+  if (skill === 'WAIT') {
+    return executeWait;
+  }
+
   if (skill === 'move_to') {
     return (actionItem, context) => executeMoveTo(actionItem, context, dependencies);
   }
