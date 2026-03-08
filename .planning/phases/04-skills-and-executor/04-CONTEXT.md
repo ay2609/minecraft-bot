@@ -17,7 +17,7 @@ Implement the executor and tool/skill layer so all 10 core skills run against th
 - Success validation should be hybrid by skill: some skills require strict post-condition world checks while lower-risk actions can use lighter validation.
 - Partial completion is not success; return a structured failure code that best matches the incomplete outcome.
 - Executor should not auto-retry failed actions by default.
-- Unsafe conditions should generally be evaluated through attempted execution outcomes rather than globally pre-blocking all risky actions.
+- Unsafe conditions must be derived from attempted execution outcomes and post-condition evidence, not broad global pre-blocking of risky actions.
 
 ### Movement mutex behavior
 - When concurrent `move_to` requests conflict, resolution should be delegated to the thinking/planning layer based on request intent (why each request was made), rather than fixed queue-or-replace behavior only.
@@ -67,6 +67,7 @@ Implement the executor and tool/skill layer so all 10 core skills run against th
 - Conflict handling for movement should account for intent, not only request order.
 - Thinking/planning layers should always see dropped/failed/timed-out action history.
 - Keep failure payloads compact but decision-useful.
+- Up-front blocking should be limited to hard-invalid or impossible requests; risk/unsafe classification is attempt-derived.
 
 </specifics>
 
