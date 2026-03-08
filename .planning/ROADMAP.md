@@ -17,7 +17,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 3: Perception Layer** - Bot produces debounced PerceptionSnapshot at 1-2 Hz; context assembler composes prompt-ready context (completed 2026-03-08)
 - [x] **Phase 4: Skills and Executor** - All 10 skills run against a live server with structured error codes; no LLM involved (completed 2026-03-08)
 - [ ] **Phase 5: LLM Client and Tactical Planner** - Fireworks client calls succeed; Model B manages the action queue end-to-end
-- [ ] **Phase 6: Strategic Planner and Autonomous Loop** - Model A selects goals and hands off to Model B; bot pursues goals without commands
+- [x] **Phase 6: Strategic Planner and Autonomous Loop** - Model A selects goals and hands off to Model B; bot pursues goals without commands (completed 2026-03-08)
 - [ ] **Phase 7: Recovery System** - Failure escalation, watchdog, death recovery, and episodic memory-driven adaptation all fire correctly
 - [ ] **Phase 8: Observability and Player Interaction** - Terminal dashboard shows live state; player chat reaches the planners
 
@@ -144,6 +144,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 3. Perception Layer | 3/3 | Complete   | 2026-03-08 |
 | 4. Skills and Executor | 4/4 | Complete | 2026-03-08 |
 | 5. LLM Client and Tactical Planner | 2/3 | In Progress|  |
-| 6. Strategic Planner and Autonomous Loop | 2/3 | In Progress|  |
+| 6. Strategic Planner and Autonomous Loop | 3/3 | Complete   | 2026-03-08 |
 | 7. Recovery System | 0/TBD | Not started | - |
 | 8. Observability and Player Interaction | 0/TBD | Not started | - |
