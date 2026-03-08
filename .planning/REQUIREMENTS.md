@@ -33,7 +33,7 @@
 
 ### Planning
 
-- [ ] **PLAN-01**: Fireworks LLM client wraps the `openai` npm package with `baseURL` pointing to the Fireworks.ai inference endpoint; handles JSON parse failures with a retry, surfaces structured errors for context-length exceeded and rate limits
+- [x] **PLAN-01**: Fireworks LLM client wraps the `openai` npm package with `baseURL` pointing to the Fireworks.ai inference endpoint; handles JSON parse failures with a retry, surfaces structured errors for context-length exceeded and rate limits
 - [ ] **PLAN-02**: Model B (tactical loop) runs on completion or failure of each action; it receives the assembled context, maintains the action queue, selects the next skill call, and decides whether to continue, retry, reorder, or escalate; outputs strict JSON
 - [ ] **PLAN-03**: Model A (strategic loop) runs on discrete triggers (no active plan, escalation from Model B, plan completion, survival threshold); it chooses the current long-horizon goal, produces an ordered subgoal sequence with success and abort conditions, and hands off to Model B; outputs strict JSON
 - [ ] **PLAN-04**: When the bot has no active goal and is not in a survival emergency, Model A autonomously selects the next objective based on current world state, memory, and progression heuristics (not just waits for a command)
@@ -100,7 +100,7 @@
 | EXEC-01 | Phase 4 | Complete |
 | EXEC-02 | Phase 4 | Complete |
 | EXEC-03 | Phase 4 | Complete |
-| PLAN-01 | Phase 5 | Pending |
+| PLAN-01 | Phase 5 | Complete |
 | PLAN-02 | Phase 5 | Pending |
 | PLAN-03 | Phase 6 | Pending |
 | PLAN-04 | Phase 6 | Pending |

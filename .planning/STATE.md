@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-current_plan: 3
+current_plan: 4
 status: verifying
-stopped_at: Phase 5 context gathered
-last_updated: "2026-03-08T06:10:59.579Z"
+stopped_at: Completed 05-01-PLAN.md
+last_updated: "2026-03-08T06:48:27.534Z"
 last_activity: 2026-03-08
 progress:
   total_phases: 8
   completed_phases: 4
-  total_plans: 13
-  completed_plans: 13
+  total_plans: 16
+  completed_plans: 14
   percent: 100
 ---
 
@@ -28,7 +28,7 @@ See: .planning/PROJECT.md (updated 2026-03-06)
 
 Phase: 4 of 8 (Skills and Executor - complete)
 Plan: 4 of 4 in current phase
-Current Plan: 3
+Current Plan: 4
 Total Plans in Phase: 4
 Status: Ready for verification
 Last activity: 2026-03-08
@@ -67,6 +67,7 @@ Progress: [██████████] 100%
 | Phase 04-skills-and-executor P02 | 8m | 3 tasks | 9 files |
 | Phase 04-skills-and-executor P03 | 7m | 3 tasks | 12 files |
 | Phase 04-skills-and-executor P04 | 5 min | 3 tasks | 8 files |
+| Phase 05-llm-client-and-tactical-planner P01 | 5min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -111,6 +112,9 @@ Recent decisions affecting current work:
 - [Phase 04-skills-and-executor]: Movement arbitration outcomes are preserved in ExecutorResult metadata for planner-visible runtime diagnostics.
 - [Phase 04-skills-and-executor]: Inventory skill handlers fail closed on malformed params and missing prerequisites before runtime attempt hooks.
 - [Phase 04-skills-and-executor]: Timeout behavior is validated at executor boundary using real skill routing and coordinator interaction rather than isolated mapping tests.
+- [Phase 05-llm-client-and-tactical-planner]: FireworksLLMClient uses maxRetries:0 on OpenAI SDK to surface RateLimitError immediately — client manages its own retry logic
+- [Phase 05-llm-client-and-tactical-planner]: finish_reason=length returns context_length without consuming a retry — truncated output cannot be fixed by retrying
+- [Phase 05-llm-client-and-tactical-planner]: LLMCallFn injection seam in FireworksLLMClient constructor for unit-testing without real API credentials
 
 ### Pending Todos
 
@@ -125,6 +129,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-08T06:10:59.574Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-llm-client-and-tactical-planner/05-CONTEXT.md
+Last session: 2026-03-08T06:48:27.532Z
+Stopped at: Completed 05-01-PLAN.md
+Resume file: None
