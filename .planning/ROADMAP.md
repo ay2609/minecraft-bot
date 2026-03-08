@@ -47,12 +47,11 @@ Plans:
   2. Working memory holds the current plan, active subgoal, action queue, and constraints as an in-process object; querying it returns the correct current state
   3. A fact written to semantic memory and an episode written to episodic memory are both readable after a process restart with no data loss
   4. After restart, working memory is reconstructed from the last committed plan state so the bot resumes its prior goal rather than starting from scratch
-**Plans**: 4 plans
+**Plans**: 3 plans
 Plans:
-- [x] 04-01-PLAN.md — Executor core boundary, single-attempt policy, and registry contract
-- [x] 04-02-PLAN.md — Movement coordinator with queue/preemption semantics and integration checks
-- [x] 04-03-PLAN.md — Unsafe-policy and high-risk skill semantics with deterministic failure mapping
-- [x] 04-04-PLAN.md — Remaining inventory skills, full error-code matrix validation, and phase-level integration coverage
+- [x] 02-01-PLAN.md — SQLite bootstrap, schema initialization, and memory-store wiring
+- [x] 02-02-PLAN.md — Semantic/episodic repository APIs with typed query surfaces
+- [x] 02-03-PLAN.md — Restart restore flow, checkpoint recovery, and durability integration coverage
 
 ### Phase 3: Perception Layer
 **Goal**: The bot continuously produces compact, prompt-ready game state snapshots and assembles them into structured context for planners
@@ -76,7 +75,12 @@ Plans:
   1. Each of the 10 skills (`move_to`, `follow_entity`, `place_block`, `break_block`, `craft_item`, `drop_item`, `equip_item`, `interact_block`, `attack_entity`, `send_chat`) executes in-game and returns an `ExecutorResult` — never throws
   2. All 10 error codes (`no_path`, `interrupted`, `insufficient_materials`, `inventory_full`, `tool_missing`, `unsafe`, `timed_out`, `target_unavailable`, `route_blocked`, `invalid_state`) are produced by real failure conditions, not stub returns; each skill has a configurable max duration and returns `timed_out` when exceeded
   3. Issuing a second `move_to` while one is in-flight does not cause oscillation — the movement mutex queues or cancels the second call cleanly and a single coherent path is followed
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [x] 04-01-PLAN.md — Executor core boundary, single-attempt policy, and registry contract
+- [x] 04-02-PLAN.md — Movement coordinator with queue/preemption semantics and integration checks
+- [x] 04-03-PLAN.md — Unsafe-policy and high-risk skill semantics with deterministic failure mapping
+- [x] 04-04-PLAN.md — Remaining inventory skills, full error-code matrix validation, and phase-level integration coverage
 
 ### Phase 5: LLM Client and Tactical Planner
 **Goal**: The Fireworks LLM client calls succeed against the real API; Model B manages the action queue end-to-end from context to executed skill
