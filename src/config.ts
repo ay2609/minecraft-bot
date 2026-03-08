@@ -1,3 +1,5 @@
+import type { CoreSkillName } from './types';
+
 export interface Config {
   minecraft: {
     host: string;
@@ -22,6 +24,10 @@ export interface Config {
     nearbyEntityLimit: number;
     nearbyBlockLimit: number;
     recentFailureLimit: number;
+  };
+  executor: {
+    defaultTimeoutMs: number;
+    perSkillTimeoutMs: Record<CoreSkillName, number> & Record<string, number>;
   };
 }
 
@@ -63,5 +69,20 @@ export const config: Config = {
     nearbyEntityLimit: parsePositiveNumberEnv(process.env['PERCEPTION_NEARBY_ENTITY_LIMIT'], 12),
     nearbyBlockLimit: parsePositiveNumberEnv(process.env['PERCEPTION_NEARBY_BLOCK_LIMIT'], 16),
     recentFailureLimit: parsePositiveNumberEnv(process.env['PERCEPTION_RECENT_FAILURE_LIMIT'], 8),
+  },
+  executor: {
+    defaultTimeoutMs: parsePositiveNumberEnv(process.env['EXECUTOR_DEFAULT_TIMEOUT_MS'], 15000),
+    perSkillTimeoutMs: {
+      move_to: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_MOVE_TO_MS'], 20000),
+      follow_entity: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_FOLLOW_ENTITY_MS'], 20000),
+      place_block: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_PLACE_BLOCK_MS'], 12000),
+      break_block: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_BREAK_BLOCK_MS'], 12000),
+      craft_item: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_CRAFT_ITEM_MS'], 15000),
+      drop_item: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_DROP_ITEM_MS'], 5000),
+      equip_item: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_EQUIP_ITEM_MS'], 5000),
+      interact_block: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_INTERACT_BLOCK_MS'], 5000),
+      attack_entity: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_ATTACK_ENTITY_MS'], 5000),
+      send_chat: parsePositiveNumberEnv(process.env['EXECUTOR_TIMEOUT_SEND_CHAT_MS'], 3000),
+    },
   },
 };

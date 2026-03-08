@@ -84,6 +84,18 @@ export type ExecutorErrorCode =
   | 'route_blocked'
   | 'invalid_state';
 
+export type CoreSkillName =
+  | 'move_to'
+  | 'follow_entity'
+  | 'place_block'
+  | 'break_block'
+  | 'craft_item'
+  | 'drop_item'
+  | 'equip_item'
+  | 'interact_block'
+  | 'attack_entity'
+  | 'send_chat';
+
 export interface ActionItem {
   skill: string;                        // 'move_to' | 'break_block' | 'craft_item' | etc.
   params: Record<string, unknown>;
@@ -167,4 +179,9 @@ export interface ExecutorResult {
   errorMessage: string | null;
   durationMs: number;
   stateChanges: Partial<PerceptionSnapshot>;
+  metadata?: {
+    attempt: number;
+    timedOut: boolean;
+    completedAtMs: number;
+  };
 }
