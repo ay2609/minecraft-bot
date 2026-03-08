@@ -90,15 +90,15 @@ async function run(): Promise<void> {
     },
   };
 
-  const originalCall = FireworksLLMClient.prototype.call;
+  const originalCallDescriptor = Object.getOwnPropertyDescriptor(FireworksLLMClient.prototype, 'call');
   const llmPayloads: Array<Record<string, unknown>> = [];
-  FireworksLLMClient.prototype.call = async function mockedCall(messages) {
+  FireworksLLMClient.prototype.call = function mockedCall(messages) {
     const userMessage = messages[1];
-    const parsed = typeof userMessage?.content === 'string'
+    const parsed: unknown = typeof userMessage?.content === 'string'
       ? JSON.parse(userMessage.content)
       : {};
-    llmPayloads.push(parsed as Record<string, unknown>);
-    return {
+    llmPayloads.push(typeof parsed === 'object' && parsed !== null ? (parsed as Record<string, unknown>) : {});
+    return Promise.resolve({
       ok: true as const,
       data: {
         reasoning: 'integration-test',
@@ -108,7 +108,7 @@ async function run(): Promise<void> {
         escalate: false,
         escalateReason: null,
       },
-    };
+    });
   };
 
   let contextReadyCount = 0;
@@ -202,7 +202,9 @@ async function run(): Promise<void> {
     app.memory.close();
   } finally {
     eventBus.off('planner:context-ready', onContextReady);
-    FireworksLLMClient.prototype.call = originalCall;
+    if (originalCallDescriptor) {
+      Object.defineProperty(FireworksLLMClient.prototype, 'call', originalCallDescriptor);
+    }
   }
 
   console.log('index planner context integration: PASS');
