@@ -226,10 +226,13 @@ async function testAssembleFromLatestSnapshotPublishesPlannerBoundary(): Promise
       activeSubgoalId: 'sg-collect',
       inFlightSkill: 'gather',
     },
-    retrieveMemory: async () => ({
-      semantic: [],
-      episodic: [],
-    }),
+    retrieveMemory: async () => {
+      await Promise.resolve();
+      return {
+        semantic: [],
+        episodic: [],
+      };
+    },
     events: bus,
   });
 

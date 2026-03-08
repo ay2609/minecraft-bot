@@ -85,6 +85,7 @@ export class ContextAssembler {
       getLatestSnapshot: () => PlannerContextInput['snapshot'] | null;
       intent: PlannerContextInput['intent'];
       retrieveMemory: PlannerContextInput['retrieveMemory'];
+      events?: Pick<TypedEventBus, 'emit'>;
     },
   ): Promise<PlannerContextBundle | null> {
     const snapshot = options.getLatestSnapshot();
@@ -92,11 +93,13 @@ export class ContextAssembler {
       return null;
     }
 
-    return this.assemblePlannerContext({
+    const bundle = await this.assemblePlannerContext({
       snapshot,
       intent: options.intent,
       retrieveMemory: options.retrieveMemory,
     });
+    options.events?.emit('planner:context-ready', bundle);
+    return bundle;
   }
 
   private async resolveMemory(input: PlannerContextInput): Promise<MemoryResolution> {
