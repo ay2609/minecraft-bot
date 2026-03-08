@@ -12,7 +12,7 @@ const VALID_OUTPUT = {
   escalateReason: null,
 };
 
-async function run(): Promise<void> {
+function run(): void {
   // Test 1: valid object passes safeParse
   {
     const result = TacticalOutputSchema.safeParse(VALID_OUTPUT);
@@ -21,6 +21,7 @@ async function run(): Promise<void> {
 
   // Test 2: missing finalQueue field returns success=false with path in issues
   {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { finalQueue: _omitted, ...withoutFinalQueue } = VALID_OUTPUT;
     const result = TacticalOutputSchema.safeParse(withoutFinalQueue);
     assert.strictEqual(result.success, false, 'Expected object missing finalQueue to fail safeParse');
@@ -43,7 +44,9 @@ async function run(): Promise<void> {
   console.log('tacticalSchema: all tests passed');
 }
 
-run().catch((err: unknown) => {
+try {
+  run();
+} catch (err: unknown) {
   console.error('Test failed:', err);
   process.exit(1);
-});
+}
