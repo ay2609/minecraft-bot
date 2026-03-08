@@ -4,14 +4,14 @@ milestone: v1.0
 milestone_name: milestone
 current_plan: 3
 status: Ready for execution
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-03-08T03:58:52.979Z"
+stopped_at: Completed 04-04-PLAN.md
+last_updated: "2026-03-08T04:07:50.571Z"
 last_activity: 2026-03-08
 progress:
   total_phases: 8
-  completed_phases: 3
+  completed_phases: 4
   total_plans: 13
-  completed_plans: 12
+  completed_plans: 13
   percent: 100
 ---
 
@@ -22,15 +22,15 @@ progress:
 See: .planning/PROJECT.md (updated 2026-03-06)
 
 **Core value:** The bot should feel like a competent, persistent player — not a command executor. It pursues meaningful goals on its own, recovers when plans break, and doesn't require babysitting.
-**Current focus:** Phase 3 - Perception Layer (plan 02 complete, plan 03 pending)
+**Current focus:** Phase 5 - LLM Client and Tactical Planner (phase planning pending)
 
 ## Current Position
 
-Phase: 3 of 8 (Perception Layer - in progress)
-Plan: 2 of 3 in current phase
+Phase: 4 of 8 (Skills and Executor - complete)
+Plan: 4 of 4 in current phase
 Current Plan: 3
-Total Plans in Phase: 3
-Status: Ready for execution
+Total Plans in Phase: 4
+Status: Ready for verification
 Last activity: 2026-03-08
 
 Progress: [██████████] 100%
@@ -66,6 +66,7 @@ Progress: [██████████] 100%
 | Phase 04-skills-and-executor P01 | 24 min | 3 tasks | 11 files |
 | Phase 04-skills-and-executor P02 | 8m | 3 tasks | 9 files |
 | Phase 04-skills-and-executor P03 | 7m | 3 tasks | 12 files |
+| Phase 04-skills-and-executor P04 | 5 min | 3 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -108,6 +109,8 @@ Recent decisions affecting current work:
 - [Phase 04-skills-and-executor]: High-risk skills reject only hard-invalid requests up front and classify unsafe from attempted execution/post-condition evidence.
 - [Phase 04-skills-and-executor]: Failure mapping merges structured attempt signals with text patterns and applies deterministic precedence (timed_out > target_unavailable > unsafe > route_blocked).
 - [Phase 04-skills-and-executor]: Movement arbitration outcomes are preserved in ExecutorResult metadata for planner-visible runtime diagnostics.
+- [Phase 04-skills-and-executor]: Inventory skill handlers fail closed on malformed params and missing prerequisites before runtime attempt hooks.
+- [Phase 04-skills-and-executor]: Timeout behavior is validated at executor boundary using real skill routing and coordinator interaction rather than isolated mapping tests.
 
 ### Pending Todos
 
@@ -122,6 +125,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-08T03:58:52.977Z
-Stopped at: Completed 04-03-PLAN.md
+Last session: 2026-03-08T04:07:50.569Z
+Stopped at: Completed 04-04-PLAN.md
 Resume file: None

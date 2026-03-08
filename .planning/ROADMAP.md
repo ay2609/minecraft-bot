@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: Project Scaffolding** - TypeScript project boots, shared types compile, EventBus wires layers together
 - [x] **Phase 2: Memory Persistence** - SQLite schemas initialize on startup; working, semantic, and episodic memory survive restarts (completed 2026-03-07)
 - [x] **Phase 3: Perception Layer** - Bot produces debounced PerceptionSnapshot at 1-2 Hz; context assembler composes prompt-ready context (completed 2026-03-08)
-- [ ] **Phase 4: Skills and Executor** - All 10 skills run against a live server with structured error codes; no LLM involved
+- [x] **Phase 4: Skills and Executor** - All 10 skills run against a live server with structured error codes; no LLM involved (completed 2026-03-08)
 - [ ] **Phase 5: LLM Client and Tactical Planner** - Fireworks client calls succeed; Model B manages the action queue end-to-end
 - [ ] **Phase 6: Strategic Planner and Autonomous Loop** - Model A selects goals and hands off to Model B; bot pursues goals without commands
 - [ ] **Phase 7: Recovery System** - Failure escalation, watchdog, death recovery, and episodic memory-driven adaptation all fire correctly
@@ -47,7 +47,12 @@ Plans:
   2. Working memory holds the current plan, active subgoal, action queue, and constraints as an in-process object; querying it returns the correct current state
   3. A fact written to semantic memory and an episode written to episodic memory are both readable after a process restart with no data loss
   4. After restart, working memory is reconstructed from the last committed plan state so the bot resumes its prior goal rather than starting from scratch
-**Plans**: TBD
+**Plans**: 4 plans
+Plans:
+- [x] 04-01-PLAN.md — Executor core boundary, single-attempt policy, and registry contract
+- [x] 04-02-PLAN.md — Movement coordinator with queue/preemption semantics and integration checks
+- [x] 04-03-PLAN.md — Unsafe-policy and high-risk skill semantics with deterministic failure mapping
+- [x] 04-04-PLAN.md — Remaining inventory skills, full error-code matrix validation, and phase-level integration coverage
 
 ### Phase 3: Perception Layer
 **Goal**: The bot continuously produces compact, prompt-ready game state snapshots and assembles them into structured context for planners
@@ -125,7 +130,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8
 | 1. Project Scaffolding | 3/3 | Complete | 2026-03-07 |
 | 2. Memory Persistence | 3/3 | Complete   | 2026-03-07 |
 | 3. Perception Layer | 3/3 | Complete   | 2026-03-08 |
-| 4. Skills and Executor | 0/TBD | Not started | - |
+| 4. Skills and Executor | 4/4 | Complete | 2026-03-08 |
 | 5. LLM Client and Tactical Planner | 0/TBD | Not started | - |
 | 6. Strategic Planner and Autonomous Loop | 0/TBD | Not started | - |
 | 7. Recovery System | 0/TBD | Not started | - |
