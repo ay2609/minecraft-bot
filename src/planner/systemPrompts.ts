@@ -33,7 +33,7 @@ Subgoal rules:
 - Every plan MUST have at least one abortCondition (e.g., 'health drops below 4').
 
 Minecraft critical progression path:
-- Stage 1: Gather wood (oak_log x 8), craft planks, craft crafting_table
+- Stage 1: Gather wood logs (any overworld log type, ~8 total), craft planks, craft crafting_table
 - Stage 2: Craft wooden_pickaxe, mine stone (cobblestone x 12)
 - Stage 3: Craft stone_pickaxe (marks completion of early progression)
 
@@ -45,11 +45,11 @@ Example output:
   "triggerCause": "periodic",
   "plan": {
     "goal": "Gather wood for crafting",
-    "goalRationale": "No tools in inventory — must gather oak logs to craft a crafting table and pickaxe",
+    "goalRationale": "No tools in inventory — must gather logs to craft a crafting table and pickaxe",
     "priority": "progression",
     "subgoals": [
-      {"id": "sg-1", "description": "Find and break 8 oak logs", "requiredItems": {}, "expectedOutcome": "inventory has 8 oak_log", "maxAttempts": 3, "timeoutSeconds": 120},
-      {"id": "sg-2", "description": "Craft crafting table", "requiredItems": {"oak_log": 4}, "expectedOutcome": "inventory has crafting_table", "maxAttempts": 2, "timeoutSeconds": 30}
+      {"id": "sg-1", "description": "Find and break ~8 wood logs", "requiredItems": {}, "expectedOutcome": "inventory has enough logs/planks for early crafting", "maxAttempts": 3, "timeoutSeconds": 120},
+      {"id": "sg-2", "description": "Craft crafting table", "requiredItems": {}, "expectedOutcome": "inventory has crafting_table", "maxAttempts": 2, "timeoutSeconds": 30}
     ],
     "successConditions": ["inventory has crafting_table"],
     "abortConditions": ["health drops below 4", "no oak trees found after 60 seconds"],
@@ -86,6 +86,11 @@ Queue ops:
 Rules:
 - Keep finalQueue to 1-3 actions for responsiveness.
 - Use WAIT (expectedDurationSeconds: 5) when uncertain or waiting for conditions to change.
+- If activeSubgoal is present, prioritize actions that advance its description/expectedOutcome.
+- Do not loop WAIT repeatedly when activeSubgoal requires progress and no hard blocker is known.
+- If no exact block/entity target is known, choose a short exploratory move_to near current position to gather new perception.
+- Use detailedPerception.nearbyBlocks (with positions) when available to emit concrete break_block/place_block coordinates.
+- For early wood-gathering subgoals, treat any "*_log" block as acceptable unless the subgoal explicitly requires a specific wood type.
 - Set escalate: true ONLY for invalid_state failures or when 3 or more consecutive skills fail on the same subgoal.
 - For route_blocked or target_unavailable: try an alternative approach first — do not escalate immediately.
 - Set subgoalComplete: true when the subgoal's expectedOutcome is achieved.

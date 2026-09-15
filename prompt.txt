@@ -1,0 +1,308 @@
+You are designing an LLM-powered Minecraft bot system from scratch in an empty repository. Your job is to think through and design the full system architecture, agent structure, data flow, memory model, control loop, prompting strategy, execution model, and development plan for an autonomous Minecraft bot that uses direct model API calls.
+
+This should not be approached as “the LLM directly plays Minecraft every tick.” The correct framing is that this is an agentic game system with a small, reliable action core and a smarter planning layer above it.
+
+The core design idea should be:
+
+The higher-level intelligence decides goals, priorities, and subgoals.
+The lower-level intelligence manages current action selection and action sequencing.
+Code handles low-level execution, movement details, monitoring, completion checks, and recovery behaviors.
+The bot should be able to communicate with players and interact/operate as if it were a player.
+
+The final design should optimize for autonomy, competence, persistence, recoverability, and clear internal structure. The bot should be open-ended and able to choose its own objectives over time, rather than only responding to narrow user commands.
+
+Structure your design around the following ideas.
+
+Perception layer
+
+Design a perception layer that converts the live game state into a compact symbolic representation that models can reason over efficiently.
+The models should not consume raw packets, raw screenshots, or giant undifferentiated dumps of state if that can be avoided. Instead, they should receive structured summaries such as:
+
+current position
+health, hunger, armor, and other status
+chat messages and chat history, including what the LLM has said in the chat
+current inventory
+nearby entities
+nearby blocks, and resources
+what the bot is currently doing
+what the bot recently failed at
+what the executor believes is reachable, blocked, risky, or expensive
+
+The perception layer should compress and pre-chew information so the models reason over meaningful abstractions instead of noise.
+
+Memory layer
+
+Design the bot with three forms of memory:
+
+Working memory:
+Used for the current plan, current subgoal, recent observations, current action queue, current constraints, and immediate context.
+
+Semantic memory:
+Used for stable facts about the world, server, locations, resources, structures, known routes, social context, recurring rules, and anything else durable.
+
+Episodic memory:
+Used for remembering attempts, failures, successes, interrupted plans, past routes, previous dangerous situations, and patterns from experience.
+
+The design should make clear how each memory type is updated, queried, and fed back into the planning and action-selection processes.
+
+A strong design should prevent the bot from:
+
+forgetting what it was doing
+repeating failed strategies forever
+re-planning too often for no reason
+losing track of long-term goals
+
+Planner layer
+
+The planning system should be split into two cooperating model roles.
+
+Model A: Higher-level planner
+This model is slower, more strategic, and responsible for deciding the overall goal direction of the bot. It should choose what the bot ought to be pursuing, why, and what sequence of subgoals makes sense. It should think in terms of priorities, multi-step progression, risk, usefulness, and long-horizon adaptation.
+
+Model B: Lower-level action manager
+This model is faster and works in cooperation with Model A. It should manage the current action queue, decide what action should happen next, react to changes in local state, interpret the current step of the higher-level plan, and update what the bot is currently doing in a more responsive way. It should be more frequently prompted than the higher-level planner, but still should not be responsible for ultra-low-level motor control.
+
+These two models should not overlap ambiguously. The design should clearly separate:
+
+deciding what should be pursued overall
+deciding what should be done right now in order to advance that plan
+executing low-level actions in code
+
+Tool / skill layer
+
+Design a tool or skill layer that exposes structured, high-level capabilities to the models.
+
+These tools should operate at the level of meaningful game actions, such as:
+
+moving to a certain locations or following an entity
+placing blocks
+breaking blocks
+crafting items
+dropping items
+equipping tools or gear
+interacting with crafting tables, chests, or other utility blocks
+attacking an entity
+
+Model B should be using these tools in order to achieve goals set by Model A
+
+Executor layer
+
+Design an executor layer that is implemented in plain code, not as reasoning.
+
+Its job is to:
+
+validate action/tool arguments
+execute actions through whatever runtime/client/game interface the system uses
+monitor progress
+check completion
+retry or adapt locally when appropriate
+return structured results
+return structured error codes and failure metadata
+The executor should not dump vague logs back to the models. It should return compact, machine-usable outcomes.
+
+For example, failures should be categorized in a clean and reusable way, such as:
+
+no path
+interrupted by hostile entity
+insufficient materials
+inventory full
+tool missing
+unsafe to continue
+action timed out
+target unavailable
+route blocked
+action invalid in current state
+
+The design should emphasize that the executor is not “intelligent” in the same way the planners are. It is a reliable implementation layer.
+
+Control loop
+
+Design the control loop as a hierarchy.
+
+Slow strategic loop:
+This loop prompts Model A, the higher-level planner, less frequently. It should run when there is a meaningful reason to reconsider the overall direction of the bot, such as:
+
+the current long-horizon goal is complete
+progress stalls badly
+important world conditions change
+a major failure occurs
+resources or opportunities change significantly
+the bot needs to reprioritize autonomous behavior
+a message is issued in the chat by a player
+
+Medium tactical loop:
+This loop prompts Model B more frequently than Model A. It should manage:
+
+the current action queue
+the currently active action
+transitioning from one subgoal step to the next
+deciding when to continue, reorder, replace, or cancel actions
+mapping the higher-level plan into immediately executable actions
+reacting to structured executor results
+
+Model B should be capable of updating what the bot is currently doing in accordance with the higher-level model, without requiring Model A to be called constantly.
+The architecture should make it clear that neither model is responsible for frame-by-frame movement or motor behavior. 
+
+Prompting style
+
+Do not frame the prompting strategy around identity, objective, or generic system-role prose. Instead, focus only on:
+
+Tool schema
+Clearly describe the available tools/actions each model can invoke or plan around. The tools visible to Model A and Model B may differ, and the design should consider whether the higher-level planner should operate over more abstract plan primitives while the lower-level model operates over concrete executable actions.
+
+Output format
+Require strict structured outputs, such as JSON or another deterministic format, so that both models can be parsed reliably. Avoid vague natural-language-only outputs.
+
+Planning policy
+Define the planning behavior expected from each model.
+
+For Model A:
+
+choose long-horizon goals
+justify priorities
+produce subgoals or staged plans
+consider risk, utility, persistence, and progress
+decide what the bot should generally work toward next
+specify success conditions
+specify failure or abort conditions
+avoid over-specifying low-level execution details
+
+For Model B:
+
+interpret Model A’s plan
+maintain and revise the current action queue
+select the next executable action
+decide whether to continue, retry, reorder, or replace actions
+react to executor outcomes
+keep the bot moving coherently toward higher-level subgoals
+avoid inventing world state
+avoid dropping into raw motor control
+
+Model outputs
+
+Define what each model should output.
+
+Model A should output structured information such as:
+
+current strategic objective
+why it was chosen
+priority ordering of major goals
+subgoals or stages
+progress criteria
+success conditions
+abort conditions
+fallback plan if progress becomes blocked
+possibly a compact reasoning summary if useful
+
+Model B should output structured information such as:
+
+current interpreted subgoal
+action queue
+current action
+why this action is next
+conditions that would cause it to revise the queue
+what executor result it is waiting on
+whether it thinks the higher-level planner needs to be called again
+a fallback or recovery action when the current path fails
+
+The two outputs should be clearly different in scope and timescale.
+
+Autonomy target
+
+This bot should be designed as an open-ended autonomous bot, not merely a command bot or narrow task bot.
+
+That means the design should address questions like:
+
+how the bot chooses its own objectives over time
+how it balances survival, exploration, progression, resource gathering, construction, combat, cooperation, or experimentation
+how it persists over long horizons without drifting aimlessly
+how it handles idle states
+how it notices opportunities
+how it chooses between competing goals
+how it escalates from immediate needs to longer-term projects
+The design should acknowledge that this is harder than making a command bot, and should explicitly address the need for internal prioritization logic.
+
+What makes the bot feel good
+
+A strong design should make the bot feel impressive because it has:
+
+Persistence:
+It remembers what it was doing and resumes intelligently after interruptions.
+
+Legibility:
+Its current objective, current action, and recent changes of mind can be inspected and understood.
+
+Competence:
+It does not require model calls for every tiny behavior and is grounded in a reliable executor.
+
+Recovery:
+It can detect when a plan failed and change strategy rather than repeating the same thing forever.
+
+Restraint:
+It does not thrash between plans or constantly reset its intentions.
+
+Practical architecture direction
+
+Keep this section somewhat open-ended, but provide direction.
+
+The design should probably separate concerns between:
+
+whatever runtime actually interfaces with the Minecraft world
+
+whatever component manages model calls, memory, and planning
+
+whatever storage or logging system tracks state, plans, failures, and history
+
+whatever interfaces exist for debugging, observing, or steering the bot
+
+However, do not lock into one specific implementation pattern unless it is justified. It is acceptable to propose a single-process design, multi-process design, service-oriented design, event-driven design, or something else, as long as the separation of responsibility remains clear.
+
+The architecture should support:
+
+replayability or inspectability of decisions
+visibility into current and past plans
+clean communication between execution and planning
+easy testing of planning logic independently from in-game execution
+the ability to evolve into multiple bot personalities or planners later if desired
+
+Anti-patterns to avoid
+
+Keep and preserve this section clearly.
+
+The design should explicitly avoid the following anti-patterns:
+
+Letting the models see everything
+Too much noisy state leads to wasted tokens, worse reasoning, and less stable decisions.
+
+Letting the models do movement directly
+Low-level movement and motor behavior should be handled in code, not through constant model outputs.
+
+Replanning after every action
+The system should only replan when completion, failure, or meaningful change justifies it.
+
+No explicit failure taxonomy
+If failures are vague or inconsistent, recovery logic will be weak and models will not learn stable patterns.
+
+No world model
+The bot needs durable structured knowledge about places, resources, routes, history, and other facts.
+
+One giant do-everything prompt
+The system should separate live state, memory, tool schema, plan state, and model responsibilities cleanly.
+
+Additional expectations
+
+Your response should be detailed and concrete. Do not stay at the level of vague platitudes. Work through the system as an actual buildable architecture.
+At the same time, do not become narrowly tied to one specific stack unless there is a strong architectural reason to do so. Think from first principles.
+
+You should explain:
+
+the responsibilities of each subsystem
+the data passed between them
+the update cadence of each model and code loop
+how memory should be queried and updated
+how plans become actions
+how executor results feed back into planning
+how the system avoids wasteful model usage
+how open-ended autonomous behavior remains coherent over long periods
+
+Design this as something that could genuinely be built, debugged, and iterated on by an engineer starting from an empty repository.

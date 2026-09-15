@@ -1,5 +1,6 @@
 import type { CheckpointRepository } from './CheckpointRepository';
 import type {
+  ActionItem,
   ActionQueue,
   GoalPlan,
   PlanCheckpointCommitInput,
@@ -58,6 +59,10 @@ export class WorkingMemory {
 
   setActionQueue(actionQueue: ActionQueue | null): void {
     this.state.actionQueue = cloneValue(actionQueue);
+  }
+
+  setInFlightAction(actionItem: ActionItem | null): void {
+    this.state.execution.inFlightAction = cloneValue(actionItem);
   }
 
   setConstraints(constraints: Record<string, unknown>): void {

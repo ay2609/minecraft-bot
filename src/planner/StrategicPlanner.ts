@@ -36,6 +36,18 @@ export const DEFAULT_STRATEGIC_CONFIG: StrategicConfig = {
   chatDedupeMaxEntries: 50,
 };
 
+function toPreview(value: unknown, maxChars = 420): string {
+  try {
+    const serialized = JSON.stringify(value);
+    if (!serialized) {
+      return '{}';
+    }
+    return serialized.length > maxChars ? `${serialized.slice(0, maxChars)}...` : serialized;
+  } catch {
+    return '[unserializable]';
+  }
+}
+
 // ──────────────────────────────────────────────────────────────
 // StrategicPlanner
 // ──────────────────────────────────────────────────────────────
@@ -202,6 +214,7 @@ export class StrategicPlanner {
   }
 
   private async triggerStrategic(cause: string): Promise<void> {
+    console.log(`[StrategicPlanner] trigger=${cause}`);
     this.strategicCallInProgress = true;
 
     const memSnapshot = this.workingMemory.getSnapshot();
@@ -241,6 +254,8 @@ export class StrategicPlanner {
       { role: 'user', content: JSON.stringify(userContext) },
     ];
 
+    console.log(`[StrategicPlanner] calling Model A (cause=${cause})`);
+    console.log(`[StrategicPlanner] input-preview ${toPreview(userContext)}`);
     const llmResult = await this.llmClient.call(messages);
 
     if (!llmResult.ok) {
@@ -250,6 +265,7 @@ export class StrategicPlanner {
       this.strategicCallInProgress = false;
       return;
     }
+    console.log(`[StrategicPlanner] raw-output-preview ${toPreview(llmResult.data)}`);
 
     const parsed = StrategicOutputSchema.safeParse(llmResult.data);
     if (!parsed.success) {
@@ -262,10 +278,14 @@ export class StrategicPlanner {
     }
 
     const output: StrategicOutput = parsed.data;
+    console.log(
+      `[StrategicPlanner] parsed-output goal=${output.plan.goal} subgoals=${output.plan.subgoals.length} priority=${output.plan.priority} chatDecision=${output.chatDecision ? 'yes' : 'no'}`,
+    );
 
     this.applyPlanHandoff(output.plan);
 
     if (output.chatDecision?.responseMessage) {
+      console.log(`[StrategicPlanner] chat-reply: ${output.chatDecision.responseMessage}`);
       this.events.emit('strategic:chat-reply', output.chatDecision.responseMessage);
     }
 
@@ -273,6 +293,7 @@ export class StrategicPlanner {
   }
 
   private applyPlanHandoff(plan: GoalPlan): void {
+    console.log(`[StrategicPlanner] plan-ready goal=${plan.goal}`);
     // Order: setPlan → setActiveSubgoal → setActionQueue(null) → emit strategic:plan-ready
     this.workingMemory.setPlan(plan);
     this.workingMemory.setActiveSubgoal(plan.subgoals[0].id);
